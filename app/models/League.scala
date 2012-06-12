@@ -13,14 +13,29 @@ import play.api.Play.current
  * Time: 10:16 PM
   */
 
-case class League(id: Int, name: String, location: String, description: String, active: Boolean)
+case class League(id: Long = -1, name: String, location: String, description: String, active: Boolean = false)
 
 object League {
+
+  val league = {
+    get[Long]("id") ~
+    get[String]("league_name") ~
+    get[String]("location") ~
+    get[String]("description") ~
+    get[Boolean]("active") map {
+      case id~league_name~location~description~active=> League(id, league_name, location, description, active)
+    }
+  }
+
+  def all(): List[League] = DB.withConnection { implicit c =>
+    SQL("select * from league").as(league *)
+  }
+
   def create(name: String, location: String, description: String) {
     DB.withConnection { implicit c =>
-      SQL("insert into league (name, location, description) " +
-        "values {name, location, description, active}").on(
-        'name -> name, 'location -> location, 'description ->description
+      SQL("insert into league (league_name, location, description) " +
+        "values ({league_name}, {location}, {description})").on(
+        'league_name -> name, 'location -> location, 'description ->description
         ).executeUpdate()
     }
   }
