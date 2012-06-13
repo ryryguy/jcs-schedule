@@ -1,5 +1,7 @@
 @(title: String)(content: Html)
 
+@import tags._
+
 <!DOCTYPE html>
 
 <html>
@@ -32,11 +34,7 @@
                 <div class='wsite-not-footer'>
                     <h2 style=" text-align: center; "><font size="5">Welcome to Jet City Sports!</font></h2>
                     @content
-                    <div>
-                        <div style="height: 20px; overflow: hidden; width: 100%;"></div>
-                        <hr class="styled-hr" style="width:100%;"></hr>
-                        <div style="height: 20px; overflow: hidden; width: 100%;"></div>
-                    </div>
+                    @hline()
                 </div>
             </div>
 

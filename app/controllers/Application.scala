@@ -23,16 +23,23 @@ object Application extends Controller {
   )
 
   def leagues = Action {
-    Ok(views.html.leagues(League.all(), leagueForm))
+    Ok(views.html.leagues(League.active(), League.all(), leagueForm))
   }
 
   def newLeague =  Action { implicit request =>
     leagueForm.bindFromRequest.fold(
-      errors => BadRequest(views.html.leagues(League.all(), leagueForm)),
+      errors => BadRequest(views.html.leagues(League.active(), League.all(), leagueForm)),
       league => {
         League.create(league.name, league.location, league.description)
         Redirect(routes.Application.leagues)
       }
     )
   }
+
+  def toggleLeague(id:Long) = Action {
+    League.toggle(id)
+    Redirect(routes.Application.leagues)
+  }
+
+  def league(id:Long) = TODO
 }

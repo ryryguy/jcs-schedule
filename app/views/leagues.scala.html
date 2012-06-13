@@ -1,25 +1,49 @@
-@(leagues : List[League], leagueForm : Form[League])
+@(activeLeagues: List[League], allLeagues : List[League], leagueForm : Form[League])
 
 @import helper._
+@import tags._
 
 @main(title = "JCS Schedule & Scores - Leagues") {
-    <h2>Select a league to see teams, scores, and schedules</h2>
+<h2>Select a league to see teams, scores, and schedules</h2>
 
-    <ul>
-        @leagues.map { l =>
-            <li>@l.name at @l.location: @l.description Active: @if(l.active){Yes} else {No}</li>
+<table class="float-left">
+    <tbody>
+    @activeLeagues.map { l =>
+    <tr>
+        <td><a href="/league/@l.id">@l.name</a></td>
+    </tr>
+    }
+    </tbody>
+</table>
+
+
+@boardpanel {
+<div>
+    <h3>Edit leagues:</h3>
+    <table >
+        <tbody>
+        @allLeagues.map { l =>
+        <tr>
+            <td>@l.name</td>
+            <td>@l.location</td>
+            <td>
+                <a href="@routes.Application.toggleLeague(l.id)">@if(l.active){Deactivate}else{Activate}</a>
+            </td>
+        </tr>
         }
-    </ul>
+        </tbody>
+    </table>
+</div>
 
-
+<div>
     <h3>Create a new league:</h3>
-
     @form(routes.Application.newLeague) {
 
     @inputText(leagueForm("name"))
     @inputText(leagueForm("location"))
     @inputText(leagueForm("description"))
     <input type="submit" value="Create">
-
     }
+</div>
+}
 }
