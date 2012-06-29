@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.League
+import models.{Season, League}
 
 /**
  * Created with IntelliJ IDEA.
@@ -43,5 +43,8 @@ object LeagueController extends Controller {
     Redirect(routes.LeagueController.leagues)
   }
 
-  def league(id:Long) = TODO
+  def league(id:Long) = Action {
+    val league:League = League.get(id)
+    Ok(views.html.league(league, Season.current(id), Season.next(id)))
+  }
 }

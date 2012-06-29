@@ -12,7 +12,7 @@
  code { margin: 5px 0; padding: 10px; text-align: left; display: block; overflow: auto; font: 500 1em/1.5em 'Lucida Console', 'courier new', monospace ; background: #FAFAFA; border: 1px solid #f2f2f2; }
  acronym { cursor: help; border-bottom: 1px dotted #777; }
  blockquote { margin: 10px; padding: 0 0 0 28px; border: 1px solid #f2f2f2; background: #FAFAFA url(../images/quote.gif?503089) no-repeat 5px 5px; }
- table { border-collapse: collapse; margin: 10px; }
+ table { border-collapse: collapse; }
  th strong { color: #fff; }
  th { background: #93BC0C; height: 29px; padding-left: 12px; padding-right: 12px; color: #FFF; text-align: left; border-left: 1px solid #B6D59A; border-bottom: solid 2px #FFF; }
  tr { height: 30px; }

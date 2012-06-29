@@ -1,6 +1,6 @@
 
 dl { width: 25em; }
-dt { text-align: right; font-weight: bold; float: left; width: 8em; background-color: #95b6cb; color: #eeeeee; }
+dt { text-align: right; font-weight: bold; float: left; width: 8em; background-color: #95b6cb; color: #093; }
 dt.nobg { background: none; }
 dd { margin: 0 0 0.4em 3.0em; float: left; }
 dd.info { font-size: 10px; margin: 0 0.5em 0.2em 0; }

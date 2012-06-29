@@ -5,11 +5,15 @@
 # Home page
 GET     /                           controllers.Application.index
 
+# Admin
+GET     /testData                   controllers.Application.createTestData
+GET     /logout                     controllers.Application.logout
+
 # Leagues
-GET     /leagues                    controllers.Application.leagues
-POST    /leagues                    controllers.Application.newLeague
-GET     /league/:id                 controllers.Application.league(id: Long)
-GET     /league/:id/toggle          controllers.Application.toggleLeague(id: Long)
+GET     /leagues                    controllers.LeagueController.leagues
+POST    /leagues                    controllers.LeagueController.newLeague
+GET     /league/:id                 controllers.LeagueController.league(id: Long)
+GET     /league/:id/toggle          controllers.LeagueController.toggleLeague(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

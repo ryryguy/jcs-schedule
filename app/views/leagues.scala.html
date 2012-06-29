@@ -16,7 +16,6 @@
     </tbody>
 </table>
 
-
 @boardpanel {
 <div>
     <h3>Edit leagues:</h3>
@@ -24,26 +23,32 @@
         <tbody>
         @allLeagues.map { l =>
         <tr>
+            <td>(@l.id)</td>
             <td>@l.name</td>
             <td>@l.location</td>
             <td>
-                <a href="@routes.Application.toggleLeague(l.id)">@if(l.active){Deactivate}else{Activate}</a>
+                <a href="@routes.LeagueController.toggleLeague(l.id)">@if(l.active){Deactivate}else{Activate}</a>
             </td>
         </tr>
         }
         </tbody>
     </table>
+
+    <div>
+        <h3>Create a new league:</h3>
+        @form(routes.LeagueController.newLeague) {
+
+            @inputText(leagueForm("name"))
+            <p class="clear"/>
+            @inputText(leagueForm("location"))
+            <p class="clear"/>
+            @inputText(leagueForm("description"))
+            <p class="clear"/>
+            <dt class="nobg"><input type="submit" value="Create"></dt>
+            <p class="clear"/>
+        }
+    </div>
 </div>
 
-<div>
-    <h3>Create a new league:</h3>
-    @form(routes.Application.newLeague) {
-
-    @inputText(leagueForm("name"))
-    @inputText(leagueForm("location"))
-    @inputText(leagueForm("description"))
-    <input type="submit" value="Create">
-    }
-</div>
 }
 }

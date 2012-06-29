@@ -8,10 +8,16 @@
 <head>
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/main_style.css")'>
     <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/common-v2.css")'>
+    <link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/jcs-schedule.css")'>
     <style type="text/css">
-        #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-description, .blog-sidebar div.paragraph, .blog-sidebar p, .wsite-form-field label, .wsite-form-field label {}
-        #wsite-content h2, #wsite-content .product-title, .blog-sidebar h2{}
-        #wsite-title{}
+        #wsite-content div.paragraph, #wsite-content p, #wsite-content .product-description, .blog-sidebar div.paragraph, .blog-sidebar p, .wsite-form-field label, .wsite-form-field label {
+        }
+
+        #wsite-content h2, #wsite-content .product-title, .blog-sidebar h2 {
+        }
+
+        #wsite-title {
+        }
     </style>
     <link rel="shortcut icon" type="image/png" href='@routes.Assets.at("images/favicon.png")'>
     <script src='@routes.Assets.at("javascripts/jquery-1.7.1.min.js")' type="text/javascript"></script>
@@ -20,16 +26,30 @@
 <body class='wsite-theme-light wsite-page-index weeblypage-index'>
 <div id="wrap">
     <div id="header">
-        <h1 id="logo-text"><span class='wsite-logo'><table style='height:73px'>
-            <tr>
-                <td><a href='/index.html'><image src='@routes.Assets.at("images/1332403999.png")' style='max-height:73px;'/></a>
-                </td>
-            </tr>
-        </table></span></h1>
+        <h1 id="logo-text"><span class='wsite-logo'>
+            <table>
+                <tr>
+                    <td><a href='/'>
+                        <image src='@routes.Assets.at("images/1332403999.png")' style='max-height:73px;'/>
+                    </a></td>
+                </tr>
+            </table></span></h1>
     </div>
 
     <div id="content-wrap">
         <div id="main">
+            <span style="float:right;">
+                <table cellspacing="10">
+                    <tr>
+                        @if(!League.any()) {
+                        <td><a href="@routes.Application.createTestData">Create Test Data</a></td> }
+                        <td><a href="@routes.Application.logout">Board Member Logout</a></td>
+                    </tr>
+                </table>
+            </span>
+
+            <p class="clear"/>
+
             <div id='wsite-content' class='wsite-not-footer'>
                 <div class='wsite-not-footer'>
                     <h2 style=" text-align: center; "><font size="5">Welcome to Jet City Sports!</font></h2>

@@ -1,0 +1,23 @@
+@(league:League, season:Season, nextSeason:Season)
+
+@import helper._
+@import tags._
+
+@main(title = "JCS Schedule & Scores - " + league.name) {
+<h2>@league.name: @league.description at @league.location</h2>
+
+<p><strong>Current Season</strong></p>
+@if(season != null) { Started on @season.start_date.toString("MM/dd/yy") } else {No current season}
+<p><strong>Next Season</strong></p>
+@if(nextSeason != null) { Will start on on @nextSeason.start_date.toString("MM/dd/yy") } else {Not scheduled yet}
+
+@boardpanel {
+<div>
+    <h3>Edit this league:</h3>
+
+    <p>TODO</p>
+
+</div>
+
+}
+}
