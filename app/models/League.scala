@@ -46,22 +46,18 @@ object League {
       SQL("select * from league where active = true").as(league *)
   }
 
-  def create(name: String, location: String, description: String, active: Boolean = false) {
-    DB.withConnection {
+  def create(name: String, location: String, description: String, active: Boolean = false) : Option[Long] = DB.withConnection {
       implicit c =>
         SQL("insert into league (league_name, location, description, active) " +
           "values ({league_name}, {location}, {description}, {active})").
           on('league_name -> name, 'location -> location, 'description -> description, 'active -> active)
-          .executeUpdate()
-    }
+          .executeInsert()
   }
 
-  def toggle(lid: Long) = {
-    DB.withConnection {
+  def toggle(lid: Long) = DB.withConnection {
       implicit c =>
         SQL("update league set active = not active " +
           "where id = " + lid)
           .executeUpdate()
-    }
   }
 }
