@@ -42,7 +42,8 @@
                 <table cellspacing="10">
                     <tr>
                         @if(!League.any()) {
-                        <td><a href="@routes.Application.createTestData">Create Test Data</a></td> }
+                        <td><a href="@routes.Application.createTestData">Create Test Data</a></td> } else {
+                        <td><a href="@routes.Application.clearData">Clear All Data</a></td> }
                         <td><a href="@routes.Application.logout">Board Member Logout</a></td>
                     </tr>
                 </table>

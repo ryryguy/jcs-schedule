@@ -13,7 +13,7 @@ import play.api.Play.current
  * Time: 10:16 PM
  */
 
-case class League(id: Long = -1, name: String, location: String, description: String, active: Boolean = false)
+case class League(id: Long, name: String, location: String, description: String, active: Boolean = false)
 
 object League {
   val league = {

@@ -23,11 +23,11 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Team (id: Long = -1, name:String, captainName: String, captainEmail: String )
+case class Team(id: Long, name: String, captainName: String, captainEmail: String)
 
 object Team {
   val team = {
-      long("id") ~
+    long("id") ~
       str("name") ~
       str("captain_name") ~
       str("captain_email") map {
@@ -35,7 +35,7 @@ object Team {
     }
   }
 
-  def create(name:String, captainName: String, captainEmail: String) : Option[Long] = DB.withConnection {
+  def create(name: String, captainName: String, captainEmail: String): Option[Long] = DB.withConnection {
     implicit c =>
       SQL("insert into team (name, captain_name, captain_email) " +
         "values ({name}, {captain_name}, {captain_email})").
