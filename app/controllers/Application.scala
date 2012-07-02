@@ -35,11 +35,11 @@ object Application extends Controller {
     val season1Id = Season.create(league1Id.get, lastThursday.toString(DATE_PATTERN), weeksRegular, weeksPlayoffs, 0, 0)
     Season.create(league2Id.get, "2012-10-04", 10, 2, 1, 0)
 
-    val gameNightIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
+    val gameWeekIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
                             gameDateTime = lastThursday.plusWeeks(i)) yield (
-      GameNight.create(season1Id.get, gameDateTime, playoff = (i >= weeksRegular)).get
+      GameWeek.create(season1Id.get, gameDateTime, playoff = (i >= weeksRegular)).get
       )
-    Logger.info("Game night ids: " + gameNightIds)
+    Logger.info("Game night ids: " + gameWeekIds)
 
     val teams = Array(("Shazam", "Amy Alering"), ("Shivering Chihuahuas", "Darlene O'Rourke"),
       ("Bad Feng Shui", "Mark Ninomiya"), ("USA Olympians", "Misty May")
@@ -58,7 +58,7 @@ object Application extends Controller {
     )
 
     val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2) yield (
-      Match.create(gameNightIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
+      Match.create(gameWeekIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
       )
 
     Logger.info("Match ids: " + matchIds.toString)

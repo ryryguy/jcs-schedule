@@ -14,6 +14,7 @@ import anorm._
 import play.api.db.DB
 import anorm.~
 import play.api.Play.current
+import controllers.Application
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,29 +24,29 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Match(id: Long, gameNightId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
+case class Match(id: Long, gameWeekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
                  numSets: Int)
 
 object Match {
   val matchParser = {
     long("id") ~
-      long("game_night_id") ~
+      long("game_week_id") ~
       date("start_time") ~
       int("court") ~
       long("team1_id") ~
       long("team2_id") ~
       int("num_sets") map {
-      case id ~ game_night_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
-      => new Match(id, game_night_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
+      case id ~ game_week_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
+      => new Match(id, game_week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
     }
   }
 
-  def create(gameNightId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
+  def create(gameWeekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
              numSets: Int = 3, playoff: Boolean = false, createSets: Boolean = true): Long = DB.withConnection {
     implicit c =>
-      val matchId: Long = SQL("insert into match (game_night_id, start_time, court, team1_id, team2_id, num_sets) " +
-        "values ({game_night_id}, {start_time}, {court}, {team1_id}, {team2_id}, {num_sets})").
-        on('game_night_id -> gameNightId, 'start_time -> startTime.toString("hh:mm:ss"), 'court -> court,
+      val matchId: Long = SQL("insert into match (game_week_id, start_time, court, team1_id, team2_id, num_sets) " +
+        "values ({game_week_id}, {start_time}, {court}, {team1_id}, {team2_id}, {num_sets})").
+        on('game_week_id -> gameWeekId, 'start_time -> startTime.toString(Application.TIME_PATTERN), 'court -> court,
         'team1_id -> team1Id, 'team2_id -> team2Id, 'num_sets -> numSets)
         .executeInsert().get
 

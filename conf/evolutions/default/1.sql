@@ -22,7 +22,7 @@ CREATE TABLE season (
   FOREIGN KEY (league_id) REFERENCES league(id) ON DELETE CASCADE
 );
 
-CREATE TABLE gamenight (
+CREATE TABLE week (
   id IDENTITY,
   season_id bigint NOT NULL,
   game_date datetime NOT NULL,
@@ -39,14 +39,14 @@ CREATE TABLE team (
 
 CREATE TABLE match (
   id IDENTITY,
-  game_night_id bigint NOT NULL,
+  game_week_id bigint NOT NULL,
   start_time time NOT NULL,
   court tinyint,
   team1_id bigint,
   team2_id bigint,
   num_sets tinyint,
   status varchar(10),   -- FUTURE, COMPLETED, CANCELLED
-  FOREIGN KEY (game_night_id) REFERENCES gamenight(id) ON DELETE CASCADE,
+  FOREIGN KEY (game_week_id) REFERENCES week(id) ON DELETE CASCADE,
   FOREIGN KEY (team1_id) REFERENCES team(id),
   FOREIGN KEY (team2_id) REFERENCES team(id)
 
@@ -66,7 +66,7 @@ CREATE TABLE set (
 
 DROP TABLE league;
 DROP TABLE season;
-DROP TABLE gamenight;
+DROP TABLE week;
 DROP TABLE team;
 DROP TABLE match;
 DROP TABLE set;
