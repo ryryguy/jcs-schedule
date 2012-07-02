@@ -6,6 +6,7 @@ import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
 import java.util.Date
+import controllers.Application
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,15 +25,15 @@ case class CompletedSeason(s: Season) extends LeagueSeason
 case class NextSeason(s: Season) extends LeagueSeason
 
 
-object Season {
+object Season extends ByteParser {
   val season = {
     long("id") ~
       date("start_date") ~
       bool("completed") ~
-      int("weeks_Regular") ~
-      int("weeks_Playoffs") ~
-      int("byes") ~
-      int("doubleheaders") ~
+      get[Byte]("weeks_Regular") ~
+      get[Byte]("weeks_Playoffs") ~
+      get[Byte]("byes") ~
+      get[Byte]("doubleheaders") ~
       str("league_name") map {
       case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name
       => new Season(id, league_name, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
@@ -75,7 +76,7 @@ object Season {
           join league l on s.league_id = l.id
           where league_id = {leagueId} and completed = false and start_date <= {today}
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString("yyyy-MM-dd")).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
         as(season.singleOpt).getOrElse(null)
   }
 
@@ -87,7 +88,7 @@ object Season {
             join league l on s.league_id = l.id
             where league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString("yyyy-MM-dd")).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
         as(season.singleOpt).getOrElse(null)
   }
 }

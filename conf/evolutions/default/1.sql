@@ -18,7 +18,7 @@ CREATE TABLE season (
   weeks_regular tinyint DEFAULT 1,
   weeks_playoffs tinyint DEFAULT 1,
   byes tinyint DEFAULT 0,
-  doubleheaders integer DEFAULT 0,
+  doubleheaders tinyint DEFAULT 0,
   FOREIGN KEY (league_id) REFERENCES league(id) ON DELETE CASCADE
 );
 

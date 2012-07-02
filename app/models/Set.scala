@@ -25,16 +25,7 @@ import play.api.Play.current
 
 case class Set(num: Byte, matchId: Long, team1Score: Option[Short], team2Score: Option[Short])
 
-object Set {
-  // magic from google group
-  implicit def rowToByte: Column[Byte] = Column.nonNull { (value, meta) =>
-    val MetaDataItem(qualified, nullable, clazz) = meta
-    value match {
-      case byte: Byte => Right(byte)
-      case _ => Left(TypeDoesNotMatch("Cannot convert " + value + ":" + value.asInstanceOf[AnyRef].getClass + " to Byte for column " + qualified))
-    }
-  }
-
+object Set extends ByteParser {
   val setParser = {
     get[Byte]("num") ~
       long("match_id") ~

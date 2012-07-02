@@ -9,9 +9,12 @@ import models._
 import anorm._
 import anorm.SqlParser._
 import play.api.Play.current
-import org.joda.time.{LocalTime, DateTime}
+import org.joda.time.{DateTimeConstants, LocalDate, LocalTime, DateTime}
 
 object Application extends Controller {
+
+  val DATE_PATTERN = "yyyy-MM-dd"
+  val TIME_PATTERN = "hh:mm:ss"
 
   def index = Action {
     Redirect(routes.LeagueController.leagues())
@@ -24,11 +27,17 @@ object Application extends Controller {
 
     Logger.info("League ids: " + league1Id + ", " + league2Id)
 
-    val season1Id = Season.create(league1Id.get, "2012-06-07", 10, 3, 1, 0)
+    val lastThursday = new DateTime().withDayOfWeek(DateTimeConstants.THURSDAY).minusWeeks(1).withTime(18, 15, 0, 0)
+
+    val weeksRegular: Byte = 3;
+    val weeksPlayoffs: Byte = 1;
+
+    val season1Id = Season.create(league1Id.get, lastThursday.toString(DATE_PATTERN), weeksRegular, weeksPlayoffs, 0, 0)
     Season.create(league2Id.get, "2012-10-04", 10, 2, 1, 0)
 
-    val gameNightIds = for (iDayOfMonth <- 7 to(28, 7)) yield (
-      GameNight.create(season1Id.get, new DateTime(2012, 6, iDayOfMonth, 18, 15), playoff = iDayOfMonth == 28).get
+    val gameNightIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
+                            gameDateTime = lastThursday.plusWeeks(i)) yield (
+      GameNight.create(season1Id.get, gameDateTime, playoff = (i >= weeksRegular)).get
       )
     Logger.info("Game night ids: " + gameNightIds)
 
@@ -43,13 +52,13 @@ object Application extends Controller {
     Logger.info("Team ids: " + teamIds.mkString(","))
 
     val matches = Array(
-      ((teamIds(0),teamIds(1)), (teamIds(2),teamIds(3))),
-      ((teamIds(0),teamIds(2)), (teamIds(1),teamIds(3))),
-      ((teamIds(0),teamIds(3)), (teamIds(1),teamIds(2)))
+      ((teamIds(0), teamIds(1)), (teamIds(2), teamIds(3))),
+      ((teamIds(0), teamIds(2)), (teamIds(1), teamIds(3))),
+      ((teamIds(0), teamIds(3)), (teamIds(1), teamIds(2)))
     )
 
-    val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if(iMatch == 0) matches(i)._1 else matches(i)._2 ) yield (
-        Match.create(gameNightIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
+    val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2) yield (
+      Match.create(gameNightIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
       )
 
     Logger.info("Match ids: " + matchIds.toString)
@@ -64,7 +73,16 @@ object Application extends Controller {
   }
 
   // For testing!!!
-  def clearData = TODO
+  def clearData = Action {
+    DB.withConnection {
+      implicit c =>
+        SQL("delete from league;").executeUpdate(); // most other tables cleared via cascading deletes if we start at league
+        SQL("delete from team;").executeUpdate();
+    }
+
+
+    Redirect(routes.LeagueController.leagues())
+  }
 
   def logout = TODO
 }
