@@ -24,18 +24,18 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-case class Match(id: Long, gameWeekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
+case class Match(id: Pk[Long] = NotAssigned, gameWeekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
                  numSets: Int)
 
-object Match {
-  val matchParser = {
-    long("id") ~
-      long("game_week_id") ~
-      date("start_time") ~
-      int("court") ~
-      long("team1_id") ~
-      long("team2_id") ~
-      int("num_sets") map {
+object Match extends ByteParser {
+  val simpleParser = {
+    get[Pk[Long]]("match.id") ~
+      long("match.game_week_id") ~
+      date("match.start_time") ~
+      get[Byte]("match.court") ~
+      long("match.team1_id") ~
+      long("match.team2_id") ~
+      get[Byte]("match.num_sets") map {
       case id ~ game_week_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
       => new Match(id, game_week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
     }

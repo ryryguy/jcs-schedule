@@ -4,6 +4,7 @@ import play.api.mvc.{Action, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
 import models.{Season, League}
+import anorm.{Pk, NotAssigned}
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +17,7 @@ import models.{Season, League}
 object LeagueController extends Controller {
   val leagueForm = Form(
     mapping(
-      "id" -> ignored(-1l),
+      "id" -> ignored(NotAssigned:Pk[Long]),
       "name" -> nonEmptyText(maxLength=255),
       "location" -> text,
       "description" -> text,
@@ -44,7 +45,8 @@ object LeagueController extends Controller {
   }
 
   def league(id:Long) = Action {
-    val league:League = League.get(id)
+    // TODO: handle not found.
+    val league:League = League.findById(id).get
     Ok(views.html.league(league, Season.current(id), Season.next(id)))
   }
 }

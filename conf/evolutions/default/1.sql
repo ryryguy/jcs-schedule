@@ -45,7 +45,6 @@ CREATE TABLE match (
   team1_id bigint,
   team2_id bigint,
   num_sets tinyint,
-  status varchar(10),   -- FUTURE, COMPLETED, CANCELLED
   FOREIGN KEY (game_week_id) REFERENCES week(id) ON DELETE CASCADE,
   FOREIGN KEY (team1_id) REFERENCES team(id),
   FOREIGN KEY (team2_id) REFERENCES team(id)

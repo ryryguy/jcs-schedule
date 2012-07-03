@@ -7,7 +7,13 @@
 <h2>@league.name: @league.description at @league.location</h2>
 
 <p><strong>Current Season</strong></p>
-@if(season != null) { Started on @season.start_date.toString("MM/dd/yy") } else {No current season}
+@if(season != null) { Started on @season.start_date.toString("MM/dd/yy")
+
+@*
+@week(Week., "Last Week's Games:")
+*@
+
+} else {No current season}
 <p><strong>Next Season</strong></p>
 @if(nextSeason != null) { Will start on on @nextSeason.start_date.toString("MM/dd/yy") } else {Not scheduled yet}
 

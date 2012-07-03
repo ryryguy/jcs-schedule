@@ -27,7 +27,7 @@
             <td>@l.name</td>
             <td>@l.location</td>
             <td>
-                <a href="@routes.LeagueController.toggleLeague(l.id)">@if(l.active){Deactivate}else{Activate}</a>
+                <a href="@routes.LeagueController.toggleLeague(l.id.get)">@if(l.active){Deactivate}else{Activate}</a>
             </td>
         </tr>
         }

@@ -13,15 +13,15 @@ import play.api.Play.current
  * Time: 10:16 PM
  */
 
-case class League(id: Long, name: String, location: String, description: String, active: Boolean = false)
+case class League(id: Pk[Long] = NotAssigned, name: String, location: String, description: String, active: Boolean = false)
 
 object League {
-  val league = {
-      long("id") ~
-      str("league_name") ~
-      str("location") ~
-      str("description") ~
-      bool("active") map {
+  val simpleParser = {
+      get[Pk[Long]]("league.id") ~
+      str("league.league_name") ~
+      str("league.location") ~
+      str("league.description") ~
+      bool("league.active") map {
       case id ~ league_name ~ location ~ description ~ active => League(id, league_name, location, description, active)
     }
   }
@@ -33,17 +33,17 @@ object League {
 
   def all(): List[League] = DB.withConnection {
     implicit c =>
-      SQL("select * from league").as(league *)
+      SQL("select * from league").as(simpleParser *)
   }
 
-  def get(id:Long):League = DB.withConnection {
+  def findById(id:Long):Option[League] = DB.withConnection {
     implicit c =>
-      SQL("select * from league where id = " + id).as(league.single)
+      SQL("select * from league where id = " + id).as(simpleParser.singleOpt)
   }
 
   def active(): List[League] = DB.withConnection {
     implicit c =>
-      SQL("select * from league where active = true").as(league *)
+      SQL("select * from league where active = true").as(simpleParser *)
   }
 
   def create(name: String, location: String, description: String, active: Boolean = false) : Option[Long] = DB.withConnection {

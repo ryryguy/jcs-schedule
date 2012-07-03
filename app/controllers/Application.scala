@@ -74,12 +74,16 @@ object Application extends Controller {
 
   // For testing!!!
   def clearData = Action {
-    DB.withConnection {
-      implicit c =>
-        SQL("delete from league;").executeUpdate(); // most other tables cleared via cascading deletes if we start at league
-        SQL("delete from team;").executeUpdate();
-    }
-
+//    DB.withConnection {
+//      implicit c =>
+//        SQL("delete from league;").executeUpdate(); // most other tables cleared via cascading deletes if we start at league
+//        SQL("delete from team;").executeUpdate();
+//    }
+//
+    val p1 = GameWeek.findByIdWithMatches(1)
+    val p2 = GameWeek.findByIdWithMatches(2)
+    val p3 = GameWeek.findByIdWithMatches(3)
+    val p4 = GameWeek.findByIdWithMatches(4)
 
     Redirect(routes.LeagueController.leagues())
   }
