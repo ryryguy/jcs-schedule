@@ -16,7 +16,7 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-class Season(val id: Long, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
+class Season(id: Pk[Long] = NotAssigned, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
              val weeksRegular: Int, val weeksPlayoffs: Int, val byes: Int, val doubleheaders: Int)
 
 abstract class LeagueSeason
@@ -27,12 +27,12 @@ case class NextSeason(s: Season) extends LeagueSeason
 
 object Season extends ByteParser {
   val season = {
-    long("id") ~
-      date("start_date") ~
-      bool("completed") ~
-      get[Byte]("weeks_Regular") ~
-      get[Byte]("weeks_Playoffs") ~
-      get[Byte]("byes") ~
+    get[Pk[Long]]("season.id") ~
+      date("season.start_date") ~
+      bool("season.completed") ~
+      get[Byte]("season.weeks_Regular") ~
+      get[Byte]("season.weeks_Playoffs") ~
+      get[Byte]("season.byes") ~
       get[Byte]("doubleheaders") ~
       str("league_name") map {
       case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name

@@ -1,5 +1,5 @@
-@(week:Option[GameWeek], title:String)
-<div class="gameweek">
+@(week:Option[Week], title:String)
+<div class="week">
     @week.get.gameDate.toString(Application.DATE_PATTERN): @title
     <table>
 

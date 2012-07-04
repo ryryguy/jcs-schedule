@@ -33,7 +33,7 @@ object LeagueController extends Controller {
     leagueForm.bindFromRequest.fold(
       errors => BadRequest(views.html.leagues(League.active(), League.all(), leagueForm)),
       league => {
-        League.create(league.name, league.location, league.description)
+        League.create(league)
         Redirect(routes.LeagueController.leagues)
       }
     )

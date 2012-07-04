@@ -15,35 +15,34 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class GameWeek(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean)
+case class Week(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean)
 
-//case class GameWeekWithMatch(gameweek:GameWeek, theMatch:Option[Match])
-case class GameWeekWithMatches(gameweek: GameWeek, matches: Seq[Option[Match]])
+case class GameWeekWithGames(week: Week, games: Seq[Option[Game]])
 
-object GameWeek {
+object Week {
   val simpleParser = {
     get[Pk[Long]]("week.id") ~
       long("week.season_id") ~
       date("week.game_date") ~
       bool("week.playoff") map {
-      case id ~ season_id ~ game_date ~ playoff => new GameWeek(id, season_id, new DateTime(game_date), playoff)
+      case id ~ season_id ~ game_date ~ playoff => new Week(id, season_id, new DateTime(game_date), playoff)
     }
   }
 
-  def findByIdWithMatches(weekId: Long): Option[GameWeekWithMatches] = DB.withConnection {
+  def findByIdWithGames(weekId: Long): Option[GameWeekWithGames] = DB.withConnection {
     implicit c =>
-      val weekAndMatches: List[(GameWeek, Option[Match])] = SQL(
+      val weekAndMatches: List[(Week, Option[Game])] = SQL(
         """
           SELECT * FROM week
-          LEFT OUTER JOIN match ON match.game_week_id = week.id
+          LEFT OUTER JOIN game ON game.week_id = week.id
           WHERE week.id = {id}
         """
       )
         .on('id -> weekId)
-        .as((GameWeek.simpleParser ~ (Match.simpleParser ?)) *) map (flatten)
+        .as((Week.simpleParser ~ (Game.simpleParser ?)) *) map (flatten)
 
       weekAndMatches.headOption.map {
-        f => GameWeekWithMatches(f._1, weekAndMatches.map(_._2))
+        f => GameWeekWithGames(f._1, weekAndMatches.map(_._2))
       }
   }
 
@@ -55,9 +54,4 @@ object GameWeek {
         .executeInsert()
   }
 
-  //  def getBeforeAndAfterDate(seasonId:Long, date:LocalDate, numBefore:Int = 1, numAfter:Int = 1) : (List[GameWeekWithMatches], List[GameWeekWithMatches])
-  //    = DB.withConnection {
-  //    implicit c =>
-  //      SQL("select * from ")
-  //  }
 }

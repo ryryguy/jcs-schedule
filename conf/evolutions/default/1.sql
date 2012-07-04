@@ -37,15 +37,15 @@ CREATE TABLE team (
   captain_email varchar(200)
 );
 
-CREATE TABLE match (
+CREATE TABLE game (
   id IDENTITY,
-  game_week_id bigint NOT NULL,
+  week_id bigint NOT NULL,
   start_time time NOT NULL,
   court tinyint,
   team1_id bigint,
   team2_id bigint,
   num_sets tinyint,
-  FOREIGN KEY (game_week_id) REFERENCES week(id) ON DELETE CASCADE,
+  FOREIGN KEY (week_id) REFERENCES week(id) ON DELETE CASCADE,
   FOREIGN KEY (team1_id) REFERENCES team(id),
   FOREIGN KEY (team2_id) REFERENCES team(id)
 
@@ -53,12 +53,12 @@ CREATE TABLE match (
 
 CREATE TABLE set (
   num tinyint,
-  match_id bigint,
+  game_id bigint,
   team1_score tinyint,
   team2_score tinyint,
 
-  PRIMARY KEY (match_id, num),
-  FOREIGN KEY (match_id) REFERENCES match(id) ON DELETE CASCADE
+  PRIMARY KEY (game_id, num),
+  FOREIGN KEY (game_id) REFERENCES game(id) ON DELETE CASCADE
 );
 
 # --- !Downs
@@ -67,5 +67,5 @@ DROP TABLE league;
 DROP TABLE season;
 DROP TABLE week;
 DROP TABLE team;
-DROP TABLE match;
+DROP TABLE game;
 DROP TABLE set;

@@ -22,8 +22,8 @@ object Application extends Controller {
 
   def createTestData = Action {
 
-    val league1Id = League.create("Thursday Coed 4's", "Alki", "Sand A's and B's", true)
-    val league2Id = League.create("Thursday Coed 6's", "North Seattle", "Indoor A's and B's")
+    val league1Id = League.create(League(NotAssigned:Pk[Long], "Thursday Coed 4's", "Alki", "Sand A's and B's", true))
+    val league2Id = League.create(League(NotAssigned:Pk[Long], "Thursday Coed 6's", "North Seattle", "Indoor A's and B's"))
 
     Logger.info("League ids: " + league1Id + ", " + league2Id)
 
@@ -37,7 +37,7 @@ object Application extends Controller {
 
     val gameWeekIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
                             gameDateTime = lastThursday.plusWeeks(i)) yield (
-      GameWeek.create(season1Id.get, gameDateTime, playoff = (i >= weeksRegular)).get
+      Week.create(season1Id.get, gameDateTime, playoff = (i >= weeksRegular)).get
       )
     Logger.info("Game night ids: " + gameWeekIds)
 
@@ -58,32 +58,28 @@ object Application extends Controller {
     )
 
     val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2) yield (
-      Match.create(gameWeekIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
+      Game.create(gameWeekIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
       )
 
-    Logger.info("Match ids: " + matchIds.toString)
-    Match.scoreSet(matchIds(0), 1, 23, 25)
-    Match.scoreSet(matchIds(0), 2, 22, 25)
-    Match.scoreSet(matchIds(0), 3, 25, 27)
-    Match.scoreSet(matchIds(1), 1, 13, 25)
-    Match.scoreSet(matchIds(1), 2, 25, 24)
-    Match.scoreSet(matchIds(1), 3, 25, 17)
+    Logger.info("Game ids: " + matchIds.toString)
+    Game.scoreSet(matchIds(0), 1, 23, 25)
+    Game.scoreSet(matchIds(0), 2, 22, 25)
+    Game.scoreSet(matchIds(0), 3, 25, 27)
+    Game.scoreSet(matchIds(1), 1, 13, 25)
+    Game.scoreSet(matchIds(1), 2, 25, 24)
+    Game.scoreSet(matchIds(1), 3, 25, 17)
 
     Redirect(routes.LeagueController.leagues())
   }
 
   // For testing!!!
   def clearData = Action {
-//    DB.withConnection {
-//      implicit c =>
-//        SQL("delete from league;").executeUpdate(); // most other tables cleared via cascading deletes if we start at league
-//        SQL("delete from team;").executeUpdate();
-//    }
-//
-    val p1 = GameWeek.findByIdWithMatches(1)
-    val p2 = GameWeek.findByIdWithMatches(2)
-    val p3 = GameWeek.findByIdWithMatches(3)
-    val p4 = GameWeek.findByIdWithMatches(4)
+    DB.withConnection {
+      implicit c =>
+        SQL("delete from league;").executeUpdate(); // most other tables cleared via cascading deletes if we start at league
+        SQL("delete from team;").executeUpdate();
+    }
+
 
     Redirect(routes.LeagueController.leagues())
   }

@@ -23,23 +23,23 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Set(num: Byte, matchId: Long, team1Score: Option[Short], team2Score: Option[Short])
+case class Set(num: Byte, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
 
 object Set extends ByteParser {
   val setParser = {
     get[Byte]("num") ~
-      long("match_id") ~
+      long("game_id") ~
       get[Option[Short]]("team1_score") ~
       get[Option[Short]]("team2_score") map {
-      case num ~ match_id ~ team1_score ~ team2_score => new Set(num, match_id, team1_score, team2_score)
+      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
     }
   }
 
-  def create(num:Byte, matchId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
+  def create(num:Byte, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
     implicit c =>
-      SQL("insert into set (num, match_id, team1_score, team2_score) " +
-        "values ({num}, {match_id}, {team1_score}, {team2_score})").
-        on('num -> num, 'match_id -> matchId, 'team1_score -> team1Score, 'team2_score -> team2Score)
+      SQL("insert into set (num, game_id, team1_score, team2_score) " +
+        "values ({num}, {game_id}, {team1_score}, {team2_score})").
+        on('num -> num, 'game_id -> gameId, 'team1_score -> team1Score, 'team2_score -> team2Score)
         .executeInsert()
   }
 }
