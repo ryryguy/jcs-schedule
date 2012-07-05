@@ -80,7 +80,6 @@ object Application extends Controller {
         SQL("delete from team;").executeUpdate();
     }
 
-
     Redirect(routes.LeagueController.leagues())
   }
 

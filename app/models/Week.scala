@@ -6,6 +6,11 @@ import anorm._
 import play.api.db.DB
 import anorm.~
 import play.api.Play.current
+import scala._
+import anorm.~
+import scala.Some
+import scala.Boolean
+import scala.Long
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,10 +21,17 @@ import play.api.Play.current
  */
 
 case class Week(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean)
-
-case class GameWeekWithGames(week: Week, games: Seq[Option[Game]])
+case class WeekWithGames(week: Week, games: Seq[Option[Game]])
 
 object Week {
+  implicit object WeekOrdering extends Ordering[Week] {
+    def compare(x: Week, y: Week) = x.gameDate.compareTo(y.gameDate)
+  }
+
+  implicit object WeekWithGamesOrdering extends Ordering[WeekWithGames] {
+    def compare(x: WeekWithGames, y: WeekWithGames) = x.week.gameDate.compareTo(y.week.gameDate)
+  }
+
   val simpleParser = {
     get[Pk[Long]]("week.id") ~
       long("week.season_id") ~
@@ -29,7 +41,8 @@ object Week {
     }
   }
 
-  def findByIdWithGames(weekId: Long): Option[GameWeekWithGames] = DB.withConnection {
+  // Map[Week, Option[List[Game]]]
+  def findByIdWithGames(weekId: Long) : Map[Week, Option[List[Game]]] = DB.withConnection {
     implicit c =>
       val weekAndMatches: List[(Week, Option[Game])] = SQL(
         """
@@ -41,9 +54,28 @@ object Week {
         .on('id -> weekId)
         .as((Week.simpleParser ~ (Game.simpleParser ?)) *) map (flatten)
 
-      weekAndMatches.headOption.map {
-        f => GameWeekWithGames(f._1, weekAndMatches.map(_._2))
+      weekAndMatches.head match {
+        case (w, go) if go == None => Map(w -> None)
+        case (w, _) => weekAndMatches.groupBy(_._1).mapValues(l => Some(l map(_._2.get)))
       }
+  }
+
+  def allSeasonWithGames(seasonId: Long) : List[WeekWithGames] = DB.withConnection {
+    implicit c =>
+      val rs : List[(Week, Option[Game])] =
+        SQL(
+        """
+          SELECT * FROM week
+          LEFT OUTER JOIN game ON game.week_id = week.id
+          WHERE week.season_id = {season_id}
+        """
+      )
+        .on('season_id -> seasonId)
+        .as((Week.simpleParser ~ (Game.simpleParser ?)) *) map (flatten)
+
+      (for ((week, gamelist) <- rs.groupBy(_._1).mapValues(l => l map (_._2))) yield {
+        WeekWithGames(week, gamelist)
+      }).toList
   }
 
   def create(seasonId: Long, gameTime: DateTime, playoff: Boolean = false): Option[Long] = DB.withConnection {

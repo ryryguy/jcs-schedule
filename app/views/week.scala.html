@@ -1,8 +1,16 @@
-@(week:Option[Week], title:String)
+@(weekWithGames:Option[WeekWithGames], title:String)
+@* for loop weeds out None *@
+@for(week <- weekWithGames) {
 <div class="week">
-    @week.get.gameDate.toString(Application.DATE_PATTERN): @title
-    <table>
-
+    @title: @week.week.gameDate.toString(Application.DATE_PATTERN)
+    <table border="1">
+    <thead>
+        <tr><td>Time</td><td>Court</td><td>Team 1</td><td>Team 2</td></tr>
+    </thead>
+    @for(gameopt <- week.games; game <- gameopt) {
+        <tr><td>@game.startTime</td><td>@game.court</td><td>@game.team1Id</td><td>@game.team2Id</td></tr>
+        }
     </table>
 </div>
+}
 

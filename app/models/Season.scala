@@ -16,7 +16,7 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-class Season(id: Pk[Long] = NotAssigned, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
+class Season(val id: Pk[Long] = NotAssigned, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
              val weeksRegular: Int, val weeksPlayoffs: Int, val byes: Int, val doubleheaders: Int)
 
 abstract class LeagueSeason
@@ -68,7 +68,7 @@ object Season extends ByteParser {
     }
   }
 
-  def current(leagueId: Long) = DB.withConnection {
+  def current(leagueId: Long) : Option[Season] = DB.withConnection {
     implicit c =>
       SQL(
         """
@@ -77,10 +77,10 @@ object Season extends ByteParser {
           where league_id = {leagueId} and completed = false and start_date <= {today}
         """).
         on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
-        as(season.singleOpt).getOrElse(null)
+        as(season.singleOpt)
   }
 
-  def next(leagueId: Long) = DB.withConnection {
+  def next(leagueId: Long) : Option[Season] = DB.withConnection {
     implicit c =>
       SQL(
         """
@@ -89,6 +89,6 @@ object Season extends ByteParser {
             where league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1
         """).
         on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
-        as(season.singleOpt).getOrElse(null)
+        as(season.singleOpt)
   }
 }

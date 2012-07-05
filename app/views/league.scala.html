@@ -1,4 +1,4 @@
-@(league:League, season:Season, nextSeason:Season)
+@(league:League, season:Option[Season], nextSeason:Option[Season], lastWeek:Option[WeekWithGames], nextWeek:Option[WeekWithGames])
 
 @import helper._
 @import tags._
@@ -7,15 +7,21 @@
 <h2>@league.name: @league.description at @league.location</h2>
 
 <p><strong>Current Season</strong></p>
-@if(season != null) { Started on @season.start_date.toString("MM/dd/yy")
+@season match {
+case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")}
+case None => {No current season}
+}
 
-@*
-@week(Week., "Last Week's Games:")
-*@
+@week(lastWeek, "Last Week's Games")
+@week(nextWeek, "Next Week's Games")
 
-} else {No current season}
+<br><br>
+
 <p><strong>Next Season</strong></p>
-@if(nextSeason != null) { Will start on on @nextSeason.start_date.toString("MM/dd/yy") } else {Not scheduled yet}
+@nextSeason match {
+case Some(s) => {Will start on on @s.start_date.toString("MM/dd/yy")}
+case None => {Not scheduled yet}
+}
 
 @boardpanel {
 <div>
