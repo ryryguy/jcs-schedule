@@ -45,7 +45,7 @@ object Season {
     implicit c =>
       SQL("insert into season (league_id, start_date, weeks_regular, weeks_playoffs, byes, doubleheaders) " +
         "values ({league_id}, {start_date}, {weeksRegular}, {weeksPlayoffs}, {byes}, {doubleheaders})").
-        on('league_id -> leagueId, 'start_date -> ("""'""" + start_date.toString(Application.SQL_DATE_PATTERN) + """'"""), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
+        on('league_id -> leagueId, 'start_date -> ("""DATE '""" + start_date.toString(Application.SQL_DATE_PATTERN) + """'"""), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
         .executeInsert()
   }
 
