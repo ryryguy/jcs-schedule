@@ -1,6 +1,6 @@
 package models
 
-import org.joda.time.{LocalDate, DateMidnight}
+import org.joda.time.{DateTime, LocalDate, DateMidnight}
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
@@ -25,27 +25,27 @@ case class CompletedSeason(s: Season) extends LeagueSeason
 case class NextSeason(s: Season) extends LeagueSeason
 
 
-object Season extends ByteParser {
+object Season {
   val season = {
     get[Pk[Long]]("season.id") ~
       date("season.start_date") ~
       bool("season.completed") ~
-      get[Byte]("season.weeks_Regular") ~
-      get[Byte]("season.weeks_Playoffs") ~
-      get[Byte]("season.byes") ~
-      get[Byte]("doubleheaders") ~
+      get[Short]("season.weeks_Regular") ~
+      get[Short]("season.weeks_Playoffs") ~
+      get[Short]("season.byes") ~
+      get[Short]("doubleheaders") ~
       str("league_name") map {
       case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name
       => new Season(id, league_name, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
     }
   }
 
-  def create(leagueId: Long, start_date: String,
-             weeksRegular: Byte, weeksPlayoffs: Byte, byes: Byte, doubleheaders: Byte): Option[Long] = DB.withConnection {
+  def create(leagueId: Long, start_date: DateTime,
+             weeksRegular: Short, weeksPlayoffs: Short, byes: Short, doubleheaders: Short): Option[Long] = DB.withConnection {
     implicit c =>
       SQL("insert into season (league_id, start_date, weeks_regular, weeks_playoffs, byes, doubleheaders) " +
         "values ({league_id}, {start_date}, {weeksRegular}, {weeksPlayoffs}, {byes}, {doubleheaders})").
-        on('league_id -> leagueId, 'start_date -> start_date, 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
+        on('league_id -> leagueId, 'start_date -> start_date.toString(Application.SQL_DATE_PATTERN), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
         .executeInsert()
   }
 

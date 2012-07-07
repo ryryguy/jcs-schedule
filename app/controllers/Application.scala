@@ -31,11 +31,11 @@ object Application extends Controller {
 
     val lastThursday = new DateTime().withDayOfWeek(DateTimeConstants.THURSDAY).minusWeeks(1).withTime(18, 15, 0, 0)
 
-    val weeksRegular: Byte = 3;
-    val weeksPlayoffs: Byte = 1;
+    val weeksRegular: Short = 3;
+    val weeksPlayoffs: Short = 1;
 
-    val season1Id = Season.create(league1Id.get, lastThursday.toString(SQL_DATE_PATTERN), weeksRegular, weeksPlayoffs, 0, 0)
-    Season.create(league2Id.get, "2012-10-04", 10, 2, 1, 0)
+    val season1Id = Season.create(league1Id.get, lastThursday, weeksRegular, weeksPlayoffs, 0, 0)
+    Season.create(league2Id.get, new DateTime(2012,10,4,0,0), 10, 2, 1, 0)
 
     val gameWeekIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
                             gameDateTime = lastThursday.plusWeeks(i)) yield (

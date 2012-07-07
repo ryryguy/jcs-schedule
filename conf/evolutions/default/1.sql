@@ -1,7 +1,7 @@
 # --- !Ups
 
 CREATE TABLE league (
-  id bigserial PRIMARY KEY,
+  id bigint AUTO_INCREMENT PRIMARY KEY,
   league_name varchar(255),
   location varchar(255),
   description varchar(255),
@@ -9,7 +9,7 @@ CREATE TABLE league (
 );
 
 CREATE TABLE season (
-  id bigserial PRIMARY KEY,
+  id bigint AUTO_INCREMENT PRIMARY KEY,
   league_id bigint NOT NULL,
   start_date date NOT NULL,
   completed boolean DEFAULT FALSE,
@@ -21,7 +21,7 @@ CREATE TABLE season (
 );
 
 CREATE TABLE week (
-  id bigserial PRIMARY KEY,
+  id bigint AUTO_INCREMENT PRIMARY KEY,
   season_id bigint NOT NULL,
   game_date timestamp NOT NULL,
   playoff boolean,
@@ -29,14 +29,14 @@ CREATE TABLE week (
 );
 
 CREATE TABLE team (
-  id bigserial PRIMARY KEY,
+  id bigint AUTO_INCREMENT PRIMARY KEY,
   name varchar(255),
   captain_name varchar(255),
   captain_email varchar(200)
 );
 
 CREATE TABLE game (
-  id bigserial PRIMARY KEY,
+  id bigint AUTO_INCREMENT PRIMARY KEY,
   week_id bigint NOT NULL,
   start_time time NOT NULL,
   court smallint,
@@ -59,9 +59,9 @@ CREATE TABLE set (
 
 # --- !Downs
 
-DROP TABLE league;
-DROP TABLE season;
-DROP TABLE week;
-DROP TABLE team;
-DROP TABLE game;
 DROP TABLE set;
+DROP TABLE game;
+DROP TABLE week;
+DROP TABLE season;
+DROP TABLE league;
+DROP TABLE team;

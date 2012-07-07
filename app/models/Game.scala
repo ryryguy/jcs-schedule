@@ -27,15 +27,15 @@ import controllers.Application
 case class Game(id: Pk[Long] = NotAssigned, weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
                 numSets: Int)
 
-object Game extends ByteParser {
+object Game {
   val simpleParser = {
     get[Pk[Long]]("game.id") ~
       long("game.week_id") ~
       date("game.start_time") ~
-      get[Byte]("game.court") ~
+      get[Short]("game.court") ~
       long("game.team1_id") ~
       long("game.team2_id") ~
-      get[Byte]("game.num_sets") map {
+      get[Short]("game.num_sets") map {
       case id ~ week_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
       => new Game(id, week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
     }
@@ -55,14 +55,14 @@ object Game extends ByteParser {
 
       if (createSets) {
         for (i <- 1 to numSets) {
-          Set.create(i.toByte, matchId)
+          Set.create(i.toShort, matchId)
         }
       }
 
       matchId
   }
 
-  def scoreSet(matchId: Long, setNum: Byte, team1Score: Byte, team2Score: Byte) = DB.withConnection {
+  def scoreSet(matchId: Long, setNum: Short, team1Score: Short, team2Score: Short) = DB.withConnection {
     implicit c =>
       SQL( """ update set
           set team1_score = {team1_score}, team2_score = {team2_score}

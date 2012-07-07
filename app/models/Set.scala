@@ -23,11 +23,11 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Set(num: Byte, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
+case class Set(num: Short, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
 
-object Set extends ByteParser {
+object Set {
   val setParser = {
-    get[Byte]("num") ~
+    get[Short]("num") ~
       long("game_id") ~
       get[Option[Short]]("team1_score") ~
       get[Option[Short]]("team2_score") map {
@@ -35,7 +35,7 @@ object Set extends ByteParser {
     }
   }
 
-  def create(num:Byte, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
+  def create(num:Short, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
     implicit c =>
       SQL("insert into set (num, game_id, team1_score, team2_score) " +
         "values ({num}, {game_id}, {team1_score}, {team2_score})").
