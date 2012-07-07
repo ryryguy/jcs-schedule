@@ -7,6 +7,7 @@ import play.api.db._
 import play.api.Play.current
 import java.util.Date
 import controllers.Application
+import java.sql
 
 /**
  * Created with IntelliJ IDEA.
@@ -45,7 +46,7 @@ object Season {
     implicit c =>
       SQL("insert into season (league_id, start_date, weeks_regular, weeks_playoffs, byes, doubleheaders) " +
         "values ({league_id}, {start_date}, {weeksRegular}, {weeksPlayoffs}, {byes}, {doubleheaders})").
-        on('league_id -> leagueId, 'start_date -> start_date.toString(Application.SQL_DATE_PATTERN), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
+        on('league_id -> leagueId, 'start_date -> new sql.Date(start_date.getMillis), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
         .executeInsert()
   }
 
