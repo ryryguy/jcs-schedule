@@ -13,8 +13,10 @@ import org.joda.time.{DateTimeConstants, LocalDate, LocalTime, DateTime}
 
 object Application extends Controller {
 
-  val DATE_PATTERN = "yyyy-MM-dd"
-  val TIME_PATTERN = "hh:mm:ss"
+  val SQL_DATE_PATTERN = "yyyy-MM-dd"
+  val SQL_TIME_PATTERN = "hh:mm:ss"
+  val VIEW_DATE_PATTERN = "MM/dd/yy"
+  val VIEW_TIME_PATTERN = "h:mm"
 
   def index = Action {
     Redirect(routes.LeagueController.leagues())
@@ -32,7 +34,7 @@ object Application extends Controller {
     val weeksRegular: Byte = 3;
     val weeksPlayoffs: Byte = 1;
 
-    val season1Id = Season.create(league1Id.get, lastThursday.toString(DATE_PATTERN), weeksRegular, weeksPlayoffs, 0, 0)
+    val season1Id = Season.create(league1Id.get, lastThursday.toString(SQL_DATE_PATTERN), weeksRegular, weeksPlayoffs, 0, 0)
     Season.create(league2Id.get, "2012-10-04", 10, 2, 1, 0)
 
     val gameWeekIds = for (i <- 0 until weeksRegular + weeksPlayoffs;

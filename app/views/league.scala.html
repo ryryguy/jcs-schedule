@@ -1,4 +1,4 @@
-@(league:League, season:Option[Season], nextSeason:Option[Season], lastWeek:Option[WeekWithGames], nextWeek:Option[WeekWithGames])
+@(league:League, season:Option[Season], nextSeason:Option[Season], lastWeek:Option[Week], nextWeek:Option[Week])
 
 @import helper._
 @import tags._
@@ -6,22 +6,25 @@
 @main(title = "JCS Schedule & Scores - " + league.name) {
 <h2>@league.name: @league.description at @league.location</h2>
 
-<p><strong>Current Season</strong></p>
+<p><h3>Current Season -
 @season match {
 case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")}
-case None => {No current season}
-}
+case None => {None}
+}</h3>
 
+@hline()
 @week(lastWeek, "Last Week's Games")
+@hline()
 @week(nextWeek, "Next Week's Games")
+@hline()
 
 <br><br>
 
-<p><strong>Next Season</strong></p>
+<p><h3>Next Season -
 @nextSeason match {
 case Some(s) => {Will start on on @s.start_date.toString("MM/dd/yy")}
 case None => {Not scheduled yet}
-}
+}  </h3>
 
 @boardpanel {
 <div>

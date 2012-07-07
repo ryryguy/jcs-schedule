@@ -49,7 +49,7 @@ object Game extends ByteParser {
         insert into game (week_id, start_time, court, team1_id, team2_id, num_sets)
         values ({week_id}, {start_time}, {court}, {team1_id}, {team2_id}, {num_sets})
         """)
-        .on('week_id -> weekId, 'start_time -> startTime.toString(Application.TIME_PATTERN), 'court -> court,
+        .on('week_id -> weekId, 'start_time -> startTime.toString(Application.SQL_TIME_PATTERN), 'court -> court,
         'team1_id -> team1Id, 'team2_id -> team2Id, 'num_sets -> numSets)
         .executeInsert().get
 

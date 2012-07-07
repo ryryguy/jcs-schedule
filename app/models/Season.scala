@@ -76,7 +76,7 @@ object Season extends ByteParser {
           join league l on s.league_id = l.id
           where league_id = {leagueId} and completed = false and start_date <= {today}
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.SQL_DATE_PATTERN)).
         as(season.singleOpt)
   }
 
@@ -88,7 +88,7 @@ object Season extends ByteParser {
             join league l on s.league_id = l.id
             where league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.DATE_PATTERN)).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.SQL_DATE_PATTERN)).
         as(season.singleOpt)
   }
 }

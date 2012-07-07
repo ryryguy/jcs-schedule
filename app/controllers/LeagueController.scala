@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{WeekWithGames, Week, Season, League}
+import models.{Week, Season, League}
 import anorm.{Pk, NotAssigned}
 import org.joda.time.DateMidnight
 
@@ -35,27 +35,27 @@ object LeagueController extends Controller {
       errors => BadRequest(views.html.leagues(League.active(), League.all(), leagueForm)),
       league => {
         League.create(league)
-        Redirect(routes.LeagueController.leagues)
+        Redirect(routes.LeagueController.leagues())
       }
     )
   }
 
   def toggleLeague(id:Long) = Action {
     League.toggle(id)
-    Redirect(routes.LeagueController.leagues)
+    Redirect(routes.LeagueController.leagues())
   }
 
-  implicit object WeekWithGamesOrdering extends Ordering[WeekWithGames] {
-    def compare(x: WeekWithGames, y: WeekWithGames) = x.week.gameDate.compareTo(y.week.gameDate)
-  }
+//  implicit object WeekWithGamesOrdering extends Ordering[WeekWithGames] {
+//    def compare(x: WeekWithGames, y: WeekWithGames) = x.week.gameDate.compareTo(y.week.gameDate)
+//  }
 
   def league(id:Long) = Action {
     val league = League.findById(id).get
-    val currentSeason = Season.current(id);
+    val currentSeason = Season.current(id)
     val (lastWeek, nextWeek) = if(currentSeason.isDefined) {
-      val games: List[WeekWithGames] = Week.allSeasonWithGames(currentSeason.get.id.get)
+      val games: List[Week] = Week.findBySeasonId(currentSeason.get.id.get)
       val (b, a) = games
-          .partition(p => p.week.gameDate.isBefore(new DateMidnight()))
+          .partition(p => p.gameDate.isBefore(new DateMidnight()))
       (if(b.isEmpty) None else Some(b.max), if(a.isEmpty) None else Some(a.min))
     } else {
       (None, None)
