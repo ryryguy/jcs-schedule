@@ -3,7 +3,7 @@
 # --- !Ups
 
 CREATE TABLE league (
-  id IDENTITY,
+  id bigint PRIMARY KEY AUTO_INCREMENT,
   league_name varchar(255),
   location varchar(255),
   description varchar(255),
@@ -11,7 +11,7 @@ CREATE TABLE league (
 );
 
 CREATE TABLE season (
-  id IDENTITY,
+  id bigint PRIMARY KEY AUTO_INCREMENT,
   league_id bigint NOT NULL,
   start_date date NOT NULL,
   completed boolean DEFAULT FALSE,
@@ -23,7 +23,7 @@ CREATE TABLE season (
 );
 
 CREATE TABLE week (
-  id IDENTITY,
+  id bigint PRIMARY KEY AUTO_INCREMENT,
   season_id bigint NOT NULL,
   game_date datetime NOT NULL,
   playoff boolean,
@@ -31,14 +31,14 @@ CREATE TABLE week (
 );
 
 CREATE TABLE team (
-  id IDENTITY,
+  id bigint PRIMARY KEY AUTO_INCREMENT,
   name varchar(255),
   captain_name varchar(255),
   captain_email varchar(200)
 );
 
 CREATE TABLE game (
-  id IDENTITY,
+  id bigint PRIMARY KEY AUTO_INCREMENT,
   week_id bigint NOT NULL,
   start_time time NOT NULL,
   court tinyint,
