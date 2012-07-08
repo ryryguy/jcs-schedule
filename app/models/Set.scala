@@ -23,11 +23,11 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Set(num: Short, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
+case class Set(num: Int, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
 
 object Set {
   val setParser = {
-    get[Short]("num") ~
+    int("num") ~
       long("game_id") ~
       get[Option[Short]]("team1_score") ~
       get[Option[Short]]("team2_score") map {

@@ -60,7 +60,7 @@ object Application extends Controller {
     )
 
     val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2) yield (
-      Game.create(gameWeekIds(i), new LocalTime(18 + iMatch, 15 * iMatch), iMatch + 1, team1, team2)
+      Game.create(gameWeekIds(i), new LocalTime(18, 0), iMatch + 1, team1, team2)
       )
 
     Logger.info("Game ids: " + matchIds.toString)

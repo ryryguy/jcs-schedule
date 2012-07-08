@@ -7,16 +7,23 @@
 <h2>@league.name: @league.description at @league.location</h2>
 
 <p><h3>Current Season -
+
 @season match {
 case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")}
 case None => {None}
 }</h3>
 
 @hline()
-@week(lastWeek, "Last Week's Games")
-@hline()
-@week(nextWeek, "Next Week's Games")
-@hline()
+<table>
+    <tr>
+        <td>
+            @week(lastWeek, "Last Week's Games")
+            @week(nextWeek, "Next Week's Games")
+            @hline()
+        </td>
+        <td id="teams">Coming soon: Teams!</td>
+    </tr>
+</table>
 
 <br><br>
 

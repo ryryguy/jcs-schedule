@@ -32,10 +32,10 @@ object Game {
     get[Pk[Long]]("game.id") ~
       long("game.week_id") ~
       date("game.start_time") ~
-      get[Short]("game.court") ~
+      int("game.court") ~
       long("game.team1_id") ~
       long("game.team2_id") ~
-      get[Short]("game.num_sets") map {
+      int("game.num_sets") map {
       case id ~ week_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
       => new Game(id, week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
     }
@@ -49,7 +49,7 @@ object Game {
         insert into game (week_id, start_time, court, team1_id, team2_id, num_sets)
         values ({week_id}, {start_time}, {court}, {team1_id}, {team2_id}, {num_sets})
         """)
-        .on('week_id -> weekId, 'start_time -> startTime.toString(Application.SQL_TIME_PATTERN), 'court -> court,
+        .on('week_id -> weekId, 'start_time -> startTime.toDateTimeToday.toDate, 'court -> court,
         'team1_id -> team1Id, 'team2_id -> team2Id, 'num_sets -> numSets)
         .executeInsert().get
 

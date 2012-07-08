@@ -30,10 +30,10 @@ object Season {
     get[Pk[Long]]("season.id") ~
       date("season.start_date") ~
       bool("season.completed") ~
-      get[Short]("season.weeks_Regular") ~
-      get[Short]("season.weeks_Playoffs") ~
-      get[Short]("season.byes") ~
-      get[Short]("doubleheaders") ~
+      int("season.weeks_regular") ~
+      int("season.weeks_playoffs") ~
+      int("season.byes") ~
+      int("doubleheaders") ~
       str("league_name") map {
       case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name
       => new Season(id, league_name, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
@@ -45,7 +45,7 @@ object Season {
     implicit c =>
       SQL("insert into season (league_id, start_date, weeks_regular, weeks_playoffs, byes, doubleheaders) " +
         "values ({league_id}, {start_date}, {weeksRegular}, {weeksPlayoffs}, {byes}, {doubleheaders})").
-        on('league_id -> leagueId, 'start_date -> ("""DATE '""" + start_date.toString(Application.SQL_DATE_PATTERN) + """'"""), 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
+        on('league_id -> leagueId, 'start_date -> start_date.toDate, 'weeksRegular -> weeksRegular, 'weeksPlayoffs -> weeksPlayoffs, 'byes -> byes, 'doubleheaders -> doubleheaders)
         .executeInsert()
   }
 
@@ -76,7 +76,7 @@ object Season {
           join league l on s.league_id = l.id
           where league_id = {leagueId} and completed = false and start_date <= {today}
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.SQL_DATE_PATTERN)).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toDate).
         as(season.singleOpt)
   }
 
@@ -88,7 +88,7 @@ object Season {
             join league l on s.league_id = l.id
             where league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1
         """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toString(Application.SQL_DATE_PATTERN)).
+        on('leagueId -> leagueId, 'today -> new DateMidnight().toDate).
         as(season.singleOpt)
   }
 }
