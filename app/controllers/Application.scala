@@ -51,6 +51,10 @@ object Application extends Controller {
       val (team, captain) = t; Team.create(team, captain, captain.takeWhile(_ != ' ') + "@gmail.com").get
     }
 
+    teamIds.foreach(Team.addToLeague(_, league1Id.get))
+
+    Team.create("Team Not In League", "No Man", "dev@null.org")
+
     Logger.info("Team ids: " + teamIds.mkString(","))
 
     val matches = Array(

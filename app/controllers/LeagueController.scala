@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import play.api.data.Form
 import play.api.data.Forms._
-import models.{Week, Season, League}
+import models.{Team, Week, Season, League}
 import anorm.{Pk, NotAssigned}
 import org.joda.time.DateMidnight
 
@@ -60,6 +60,6 @@ object LeagueController extends Controller {
     } else {
       (None, None)
     }
-    Ok(views.html.league(league, currentSeason, Season.next(id), lastWeek, nextWeek))
+    Ok(views.html.league(league, Team.findByLeagueId(id, false).groupBy(_.id.get).mapValues(_.head), currentSeason, Season.next(id), lastWeek, nextWeek))
   }
 }

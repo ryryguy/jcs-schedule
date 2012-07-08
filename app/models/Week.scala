@@ -45,25 +45,6 @@ object Week {
 
   val weekWithGamesParser = (weekUnscheduledParser ~ (Game.simpleParser ?))
 
-  // Map[Week, Option[List[Game]]]
-  //  def findByIdWithGames(weekId: Long) : Map[Week, Option[List[Game]]] = DB.withConnection {
-  //    implicit c =>
-  //      val weekAndMatches: List[(Week, Option[Game])] = SQL(
-  //        """
-  //          SELECT * FROM week
-  //          LEFT OUTER JOIN game ON game.week_id = week.id
-  //          WHERE week.id = {id}
-  //        """
-  //      )
-  //        .on('id -> weekId)
-  //        .as(weekWithGamesParser *) map (flatten)
-  //
-  //      weekAndMatches.head match {
-  //        case (w, go) if go == None => Map(w -> None)
-  //        case (w, _) => weekAndMatches.groupBy(_._1).mapValues(l => Some(l map(_._2.get)))
-  //      }
-  //  }
-
   def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
     implicit c =>
       val rs: List[(WeekUnscheduled, Option[Game])] =

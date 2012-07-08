@@ -35,6 +35,14 @@ CREATE TABLE team (
   captain_email varchar(200)
 );
 
+CREATE TABLE team2league (
+  league_id bigint NOT NULL,
+  team_id bigint NOT NULL,
+  PRIMARY KEY(league_id, team_id),
+  FOREIGN KEY (league_id) REFERENCES league(id) ON DELETE CASCADE,
+  FOREIGN KEY (team_id) REFERENCES team(id) ON DELETE CASCADE
+);
+
 CREATE TABLE game (
   id bigserial PRIMARY KEY,
   week_id bigint NOT NULL,
@@ -63,5 +71,6 @@ DROP TABLE set;
 DROP TABLE game;
 DROP TABLE week;
 DROP TABLE season;
+DROP TABLE team2league;
 DROP TABLE league;
 DROP TABLE team;

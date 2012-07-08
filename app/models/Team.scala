@@ -23,15 +23,24 @@ import play.api.Play.current
  * To change this template use File | Settings | File Templates.
  */
 
-case class Team(id: Long, name: String, captainName: String, captainEmail: String)
+case class Team(id: Pk[Long] = NotAssigned, name: String, captainName: String, captainEmail: String)
 
 object Team {
   val team = {
-    long("id") ~
-      str("name") ~
-      str("captain_name") ~
-      str("captain_email") map {
+    get[Pk[Long]]("team.id") ~
+      str("team.name") ~
+      str("team.captain_name") ~
+      str("team.captain_email") map {
       case id ~ name ~ captain_name ~ captain_email => new Team(id, name, captain_name, captain_email)
+    }
+  }
+
+  val teamNoEmail = {
+    get[Pk[Long]]("team.id") ~
+      str("team.name") ~
+      str("team.captain_name") ~
+      str("team.captain_email") map {
+      case id ~ name ~ captain_name ~ _ => new Team(id, name, captain_name, "XXX@XXX")
     }
   }
 
@@ -41,5 +50,23 @@ object Team {
         "values ({name}, {captain_name}, {captain_email})").
         on('name -> name, 'captain_name -> captainName, 'captain_email -> captainEmail)
         .executeInsert()
+  }
+
+  def addToLeague(teamId: Long, leagueId: Long) = DB.withConnection {
+    implicit c =>
+      SQL("insert into team2league (league_id, team_id) values ({league_id}, {team_id})")
+        .on('league_id -> leagueId, 'team_id -> teamId)
+      .executeInsert()
+  }
+
+  def findByLeagueId(leagueId: Long, includeEmail: Boolean) : List[Team] = DB.withConnection {
+    implicit c =>
+      SQL("""
+          select team.* from team
+          join team2league t2l on t2l.league_id = {league_id}
+          where team.id = t2l.team_id
+          """)
+      .on('league_id -> leagueId)
+      .as((if(includeEmail) team else teamNoEmail) *)
   }
 }

@@ -1,4 +1,4 @@
-@(league:League, season:Option[Season], nextSeason:Option[Season], lastWeek:Option[Week], nextWeek:Option[Week])
+@(league:League, teams:Map[Long, Team], season:Option[Season], nextSeason:Option[Season], lastWeek:Option[Week], nextWeek:Option[Week])
 
 @import helper._
 @import tags._
@@ -9,25 +9,35 @@
 <p><h3>Current Season -
 
 @season match {
-case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")}
-case None => {None}
-}</h3>
+case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
+<span >
+                <table style="margin: auto;" cellspacing="10">
+                    <tr>
+                        <td><a href="@routes.SeasonController.schedule(s.id.get)">Complete Schedule</a></td>
+                        <td><a href="@routes.SeasonController.standings(s.id.get)">Standings</a></td>
+                    </tr>
+                </table>
+            </span>
 
-@hline()
+<p class="clear"/>}
+case None => {None</h3>}
+}
+
 <table>
     <tr>
         <td>
-            @week(lastWeek, "Last Week's Games")
-            @week(nextWeek, "Next Week's Games")
-            @hline()
+            @week(lastWeek, "Last Week's Games", teams)
+            @week(nextWeek, "Next Week's Games", teams)
         </td>
-        <td id="teams">Coming soon: Teams!<br/>
-            Fake Team 1<br/>
-            Fake Team 2<br/>
-        </td>
+        @if(teams.isEmpty == false) {
+        <td id="teams"><h4>Teams:</h4><br/>
+            @for((_,team) <- teams) {
+                @team.name <i>(@team.captainName)</i><br/>
+            }
+        </td>                        }
     </tr>
 </table>
-
+@hline()
 <br><br>
 
 <p><h3>Next Season -
@@ -40,7 +50,7 @@ case None => {Not scheduled yet}
 <div>
     <h3>Edit this league:</h3>
 
-    <p>TODO</p>
+    <p>TODO: Edit league form, add season, add/remove teams, email captains</p>
     <p></p>
     <h3>League News</h3>
     <p>TODO (maybe)</p>

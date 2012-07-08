@@ -1,17 +1,19 @@
-@(weekOption:Option[Week], title:String)
+@(weekOption:Option[Week], title:String, teams:Map[Long, Team])
 @* for loop weeds out None *@
 @for(week <- weekOption) {
 <div class="week">
-    @title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)
+    <h4>@title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)</h4>
     @week match {
-        case WeekScheduled(_,_,_,_, games) => {
+        case WeekScheduled(_,_,_, playoff, games) => {
         <table>
+            @if(playoff) {<caption><b>-- Playoff! --</b></caption>}
         <thead>
-            <tr ><td>Time</td><td>Court</td><td>Team 1</td><td>Team 2</td></tr>
+            <tr ><td>Time</td><td>Court</td><td>Teams</td></tr>
         </thead>
         <tbody>
-        @for(game <- games) {
-            <tr><td>@game.startTime.toString(Application.VIEW_TIME_PATTERN)</td><td>@game.court</td><td>@game.team1Id</td><td>@game.team2Id</td></tr>
+        @for(game <- games.sortBy(g => (g.startTime.getHourOfDay, g.court))) {
+            <tr><td>@game.startTime.toString(Application.VIEW_TIME_PATTERN)</td><td>@game.court</td>
+                <td>@teams(game.team1Id).name vs @teams(game.team2Id).name</td></tr>
             }
         </tbody>
         </table>
