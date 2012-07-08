@@ -7,4 +7,4 @@ dd.info { font-size: 10px; margin: 0 0.5em 0.2em 0; }
 
 p.clear { clear: both; }
 
-#teams { vertical-align: top }
+#teams { vertical-align: top; float: right; }
