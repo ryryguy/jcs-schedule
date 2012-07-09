@@ -17,8 +17,9 @@ GET     /league/:id                 controllers.LeagueController.league(id: Long
 GET     /league/:id/toggle          controllers.LeagueController.toggleLeague(id: Long)
 
 # Season
-GET     /season/:id/schedule        controllers.SeasonController.schedule(id: Long)
-GET     /season/:id/standings       controllers.SeasonController.standings(id: Long)
+GET     /season/:seasonId/schedule          controllers.SeasonController.schedule(seasonId: Long)
+GET     /season/:seasonId/standings         controllers.SeasonController.standings(seasonId: Long)
+GET     /season/:seasonId/schedule/:teamId  controllers.SeasonController.teamSchedule(seasonId: Long, teamId:Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

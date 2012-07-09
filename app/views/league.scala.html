@@ -6,7 +6,7 @@
 @main(title = "JCS Schedule & Scores - " + league.name) {
 <h2>@league.name: @league.description at @league.location</h2>
 
-<p><h3>Current Season -
+<p><h3 align="center">Current Season -
 
 @season match {
 case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
@@ -23,6 +23,7 @@ case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
 case None => {None</h3>}
 }
 
+@if(season != None) {
 <table>
     <tr>
         <td>
@@ -32,15 +33,19 @@ case None => {None</h3>}
         @if(teams.isEmpty == false) {
         <td id="teams"><h4>Teams:</h4><br/>
             @for((_,team) <- teams) {
-                @team.name <i>(@team.captainName)</i><br/>
+                @team.name <i>(@team.captainName)</i>
+                <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
+                <br/>
             }
-        </td>                        }
+        </td>
+        }
     </tr>
 </table>
-@hline()
-<br><br>
+}
 
-<p><h3>Next Season -
+@hline()
+
+<p><h3 align="center">Next Season -
 @nextSeason match {
 case Some(s) => {Will start on on @s.start_date.toString("MM/dd/yy")}
 case None => {Not scheduled yet}

@@ -15,4 +15,6 @@ object SeasonController extends Controller {
 
   def standings(seasonId: Long) = TODO
 
+  def teamSchedule(seasonId: Long, teamId:Long) = TODO
+
 }

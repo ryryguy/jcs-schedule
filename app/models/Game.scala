@@ -24,21 +24,32 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-case class Game(id: Pk[Long] = NotAssigned, weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
-                numSets: Int)
+abstract class Game()
+
+case class ScheduledGame(id: Pk[Long] = NotAssigned, weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
+                numSets: Int) extends Game
+case class CompletedGame(id: Pk[Long], weekId: Long, winningTeamId: Long, losingTeamId: Long, setScores: List[String]) extends Game
 
 object Game {
-  val simpleParser = {
+  val gameRowParser = {
     get[Pk[Long]]("game.id") ~
       long("game.week_id") ~
       date("game.start_time") ~
       int("game.court") ~
       long("game.team1_id") ~
       long("game.team2_id") ~
-      int("game.num_sets") map {
+      int("game.num_sets")
+  }
+
+  val simpleParser = {
+    gameRowParser map {
       case id ~ week_id ~ start_time ~ court ~ team1_id ~ team2_id ~ num_sets
-      => new Game(id, week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
+      => new ScheduledGame(id, week_id, LocalTime.fromDateFields(start_time), court, team1_id, team2_id, num_sets)
     }
+  }
+
+  val gameOuterJoinResultSetParser = {
+    (gameRowParser ~ (Set.setParser?) *)
   }
 
   def create(weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,

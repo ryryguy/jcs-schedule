@@ -26,7 +26,7 @@ abstract class Week() {
 
 case class WeekUnscheduled(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean) extends Week
 
-case class WeekScheduled(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean, games: Seq[Game]) extends Week
+case class WeekScheduled(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean, games: Seq[ScheduledGame]) extends Week
 
 object Week {
 
@@ -47,7 +47,7 @@ object Week {
 
   def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
     implicit c =>
-      val rs: List[(WeekUnscheduled, Option[Game])] =
+      val rs: List[(WeekUnscheduled, Option[ScheduledGame])] =
         SQL(
           """
           SELECT * FROM week
@@ -75,7 +75,7 @@ object Week {
   }
 
   object WeekScheduled {
-    def apply(week: WeekUnscheduled, games: Seq[Game]) =
+    def apply(week: WeekUnscheduled, games: Seq[ScheduledGame]) =
       new WeekScheduled(week.id, week.seasonId, week.gameDate, week.playoff, games)
 
   }
