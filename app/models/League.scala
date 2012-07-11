@@ -57,7 +57,8 @@ object League {
   def toggle(lid: Long) = DB.withConnection {
       implicit c =>
         SQL("update league set active = not active " +
-          "where id = " + lid)
+          "where id = {id}")
+          .on('id -> lid)
           .executeUpdate()
   }
 }
