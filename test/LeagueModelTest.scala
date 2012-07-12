@@ -11,9 +11,9 @@ import play.api.test.Helpers._
  * Time: 10:19 PM
  */
 
-class LeagueTest extends Specification {
+class LeagueModelTest extends Specification {
 
-  "League instances" should {
+  "The League model interface" should {
 
     "not have any with an empty database" in {
       running(FakeApplication()) {
@@ -22,7 +22,7 @@ class LeagueTest extends Specification {
       }
     }
 
-    "be retrievable by id" in {
+    "retrieve instances by id" in {
       running(FakeApplication()) {
         val leagueId = League.create(League(NotAssigned: Pk[Long], "Test league", "Test location", "Test description"))
         leagueId should not be None
@@ -35,7 +35,7 @@ class LeagueTest extends Specification {
       }
     }
 
-    "all be retrievable in a list" in {
+    "retrieve all instances in a list" in {
       running(FakeApplication()) {
         League.create(League(NotAssigned: Pk[Long], "Test league 2", "Test location", "Test description"))
 
@@ -45,7 +45,7 @@ class LeagueTest extends Specification {
       }
     }
 
-    "be toggleable between active and inactive" in {
+    "be able to toggle instances between active and inactive" in {
       running(FakeApplication()) {
         val leagueToToggle: League = League.all().head
         leagueToToggle.active must beFalse
@@ -55,7 +55,7 @@ class LeagueTest extends Specification {
       }
     }
 
-    "be retrievable by active leagues only" in {
+    "retrieve active leagues only" in {
       running(FakeApplication()) {
         League.active() must have size 1
         League.active().head.active must beTrue

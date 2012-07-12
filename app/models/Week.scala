@@ -45,26 +45,55 @@ object Week {
 
   val weekWithGamesParser = (weekUnscheduledParser ~ (Game.simpleParser ?))
 
-  def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
-    implicit c =>
-      val rs: List[(WeekUnscheduled, Option[ScheduledGame])] =
-        SQL(
-          """
-          SELECT * FROM week
-          LEFT OUTER JOIN game ON game.week_id = week.id
-          WHERE week.season_id = {season_id}
-          """
-        )
-          .on('season_id -> seasonId)
-          .as(weekWithGamesParser *) map (flatten)
+//  def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
+//    implicit c =>
+//      val rs: Stream[Row] =
+//        SQL(
+//          """
+//          SELECT * FROM week
+//          LEFT OUTER JOIN game ON game.week_id = week.id
+//          WHERE week.season_id = {season_id}
+//          """
+//        )
+//          .on('season_id -> seasonId)()
+//
+//      def process(rows : Stream[Row]) : List[Week] = rows match {
+//        case Stream.Empty => Nil
+//        case row #:: tail => {
+//        val w:Week = row.
+//        }
+//
+//    }
+//
+//
+//      ((rs.groupBy(_._1).mapValues(l => l map (_._2)))
+//        map {
+//          case (w, g) if g.head == None => w
+//          case (w, g)                   => WeekScheduled(w, g.map(_.get))
+//        }
+//      ).toList
+//  }
 
-      ((rs.groupBy(_._1).mapValues(l => l map (_._2)))
-        map {
-          case (w, g) if g.head == None => w
-          case (w, g)                   => WeekScheduled(w, g.map(_.get))
-        }
-      ).toList
-  }
+  def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
+        implicit c =>
+          val rs: List[(WeekUnscheduled, Option[ScheduledGame])] =
+            SQL(
+              """
+              SELECT * FROM week
+              LEFT OUTER JOIN game ON game.week_id = week.id
+              WHERE week.season_id = {season_id}
+              """
+            )
+              .on('season_id -> seasonId)
+              .as(weekWithGamesParser *) map (flatten)
+
+          ((rs.groupBy(_._1).mapValues(l => l map (_._2)))
+            map {
+              case (w, g) if g.head == None => w
+              case (w, g)                   => WeekScheduled(w, g.map(_.get))
+            }
+          ).toList
+      }
 
   def create(seasonId: Long, gameTime: DateTime, playoff: Boolean = false): Option[Long] = DB.withConnection {
     implicit c =>

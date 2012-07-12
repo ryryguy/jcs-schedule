@@ -19,7 +19,9 @@ import controllers.Application
 class Season(val id: Pk[Long] = NotAssigned, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
              val weeksRegular: Int, val weeksPlayoffs: Int, val byes: Int, val doubleheaders: Int)
 
-abstract class LeagueSeason
+abstract class LeagueSeason {
+  def s: Season
+}
 case class CurrentSeason(s: Season) extends LeagueSeason
 case class CompletedSeason(s: Season) extends LeagueSeason
 case class NextSeason(s: Season) extends LeagueSeason
@@ -33,8 +35,8 @@ object Season {
       int("season.weeks_regular") ~
       int("season.weeks_playoffs") ~
       int("season.byes") ~
-      int("doubleheaders") ~
-      str("league_name") map {
+      int("season.doubleheaders") ~
+      str("league.league_name") map {
       case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name
       => new Season(id, league_name, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
     }
@@ -56,12 +58,13 @@ object Season {
           """
           select s.*, l.league_name from season s
           join league l on s.league_id = l.id
+          where s.league_id = {leagueId}
           """).
           on('leagueId -> leagueId).as(season *)
     }
 
     for (s <- seasons) yield {
-      if (!s.completed && s.start_date.isAfter(LocalDate.now())) CurrentSeason(s)
+      if (!s.completed && s.start_date.isBefore(LocalDate.now())) CurrentSeason(s)
       else
       if (!s.completed) NextSeason(s)
       else CompletedSeason(s)
