@@ -21,11 +21,11 @@ import scala.Long
  */
 
 abstract class Week() {
+  def id: Pk[Long]
   def gameDate: DateTime
 }
 
 case class WeekUnscheduled(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean) extends Week
-
 case class WeekScheduled(id: Pk[Long] = NotAssigned, seasonId: Long, gameDate: DateTime, playoff: Boolean, games: Seq[ScheduledGame]) extends Week
 
 object Week {
@@ -95,11 +95,11 @@ object Week {
           ).toList
       }
 
-  def create(seasonId: Long, gameTime: DateTime, playoff: Boolean = false): Option[Long] = DB.withConnection {
+  def create(seasonId: Long, gameDate: DateTime, playoff: Boolean = false): Option[Long] = DB.withConnection {
     implicit c =>
       SQL("insert into week (season_id, game_date, playoff) " +
         "values ({season_id}, {game_date}, {playoff})").
-        on('season_id -> seasonId, 'game_date -> gameTime.toDate, 'playoff -> playoff)
+        on('season_id -> seasonId, 'game_date -> gameDate.toDate, 'playoff -> playoff)
         .executeInsert()
   }
 
