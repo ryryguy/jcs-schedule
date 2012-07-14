@@ -1,3 +1,5 @@
+package model
+
 import anorm.{Pk, NotAssigned}
 import models._
 import models.CurrentSeason

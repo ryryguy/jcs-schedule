@@ -24,8 +24,28 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-abstract class Game()
+case class Set(num: Int, gameId: Long, team1Score: Option[Short], team2Score: Option[Short])
 
+object Set {
+  val setParser = {
+    int("num") ~
+      long("game_id") ~
+      get[Option[Short]]("team1_score") ~
+      get[Option[Short]]("team2_score") map {
+      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
+    }
+  }
+
+  def create(num:Short, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
+    implicit c =>
+      SQL("insert into set (num, game_id, team1_score, team2_score) " +
+        "values ({num}, {game_id}, {team1_score}, {team2_score})").
+        on('num -> num, 'game_id -> gameId, 'team1_score -> team1Score, 'team2_score -> team2Score)
+        .executeInsert()
+  }
+}
+
+abstract class Game()
 case class ScheduledGame(id: Pk[Long] = NotAssigned, weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,
                 numSets: Int) extends Game
 case class CompletedGame(id: Pk[Long], weekId: Long, winningTeamId: Long, losingTeamId: Long, setScores: List[String]) extends Game
