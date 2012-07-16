@@ -8,6 +8,7 @@ import org.specs2.execute.{Result, Success, Failure, Pending}
 import org.specs2.mutable.Specification
 import play.api.test.FakeApplication
 import play.api.test.Helpers._
+import controllers.Application
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,16 +30,7 @@ class WeekModelTest extends Specification {
 
     val weekInOtherSeason = Week.create(Season.create(leagueId, seasonStartDate.plusMonths(4), 3, 1, 1, 1).get, seasonStartDate.plusMonths(4), false)
 
-
-    val teams = Array(("Shazam", "Amy Alering"), ("Shivering Chihuahuas", "Darlene O'Rourke"),
-      ("Bad Feng Shui", "Mark Ninomiya"), ("USA Olympians", "Misty May")
-    )
-
-    val teamIds = for (t <- teams) yield {
-      val (team, captain) = t; Team.create(team, captain, captain.takeWhile(_ != ' ') + "@gmail.com").get
-    }
-
-    teamIds.foreach(Team.addToLeague(_, leagueId))
+    val teamIds = Application.createTestTeams(leagueId)
 
     val week1Game1Id = Game.create(week1WithGamesId, new LocalTime(18, 0), 1, teamIds(0), teamIds(1))
     val week1Game2Id = Game.create(week1WithGamesId, new LocalTime(18, 0), 1, teamIds(2), teamIds(3))

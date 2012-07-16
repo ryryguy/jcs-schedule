@@ -48,20 +48,19 @@ object Week {
 
   val weekWithGamesParser = (weekUnscheduledParser ~ (Game.simpleParser ?))
 
+  def processWeeks(rows: List[(WeekUnscheduled, Option[ScheduledGame])]): List[Week] =
+    rows match {
+      case (week, None) :: tail => week :: processWeeks(tail)
+      case (week, Some(game)) :: tail => {
+        val (thisWeekRows, remainingRows) = rows.span(_._1.id == week.id)
+        new WeekScheduled(week, thisWeekRows map (_._2.get)) :: processWeeks(remainingRows)
+      }
+      case Nil => Nil
+    }
+
   def findBySeasonId(seasonId: Long): List[Week] = DB.withConnection {
     implicit c =>
-
-      def processWeek(rows: List[(WeekUnscheduled, Option[ScheduledGame])]): List[Week] =
-        rows match {
-          case (week, None) :: tail => week :: processWeek(tail)
-          case (week, Some(game)) :: tail => {
-            val (thisWeekRows, remainingRows) = rows.span(_._1.id == week.id)
-            new WeekScheduled(week, thisWeekRows map (_._2.get)) :: processWeek(remainingRows)
-          }
-          case Nil => Nil
-        }
-
-      processWeek(
+      processWeeks(
         (SQL(
           """
               SELECT * FROM week

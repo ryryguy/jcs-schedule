@@ -12,14 +12,25 @@ import play.api.Play.current
 import org.joda.time.{DateTimeConstants, LocalDate, LocalTime, DateTime}
 
 object Application extends Controller {
-
   val SQL_DATE_PATTERN = "yyyy-MM-dd"
   val SQL_TIME_PATTERN = "hh:mm:ss"
   val VIEW_DATE_PATTERN = "MM/dd/yy"
   val VIEW_TIME_PATTERN = "h:mm"
-
   def index = Action {
     Redirect(routes.LeagueController.leagues())
+  }
+
+  def createTestTeams(leagueId: Long): scala.Seq[Long] = {
+    val teams = Array(("Shazam", "Amy Alering"), ("Shivering Chihuahuas", "Darlene O'Rourke"),
+      ("Bad Feng Shui", "Mark Ninomiya"), ("USA Olympians", "Misty May")
+    )
+
+    val teamIds = for (t <- teams) yield {
+      val (team, captain) = t; Team.create(team, captain, captain.takeWhile(_ != ' ') + "@gmail.com").get
+    }
+
+    teamIds.foreach(Team.addToLeague(_, leagueId))
+    teamIds
   }
 
   def createTestData = Action {
@@ -43,16 +54,7 @@ object Application extends Controller {
       )
     Logger.info("Game night ids: " + gameWeekIds)
 
-    val teams = Array(("Shazam", "Amy Alering"), ("Shivering Chihuahuas", "Darlene O'Rourke"),
-      ("Bad Feng Shui", "Mark Ninomiya"), ("USA Olympians", "Misty May")
-    )
-
-    val teamIds = for (t <- teams) yield {
-      val (team, captain) = t; Team.create(team, captain, captain.takeWhile(_ != ' ') + "@gmail.com").get
-    }
-
-    teamIds.foreach(Team.addToLeague(_, league1Id.get))
-
+    val teamIds = createTestTeams(league1Id.get)
     Team.create("Team Not In League", "No Man", "dev@null.org")
 
     Logger.info("Team ids: " + teamIds.mkString(","))
