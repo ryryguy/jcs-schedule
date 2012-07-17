@@ -28,11 +28,11 @@ import views.html.week
 case class Set(num: Int, gameId: Long, team1Score: Option[Int], team2Score: Option[Int])
 
 object Set {
-  val setParser = {
-    int("set.num") ~ long("set.game_id") ~ get[Option[Int]]("set.team1_score") ~ get[Option[Int]]("set.team2_score") map {
-      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
-    }
-  }
+//  val setParser = {
+//    int("set.num") ~ long("set.game_id") ~ get[Option[Int]]("set.team1_score") ~ get[Option[Int]]("set.team2_score") map {
+//      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
+//    }
+//  }
 
   def create(num: Short, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
     implicit c =>
@@ -97,12 +97,14 @@ object Game {
     rows match {
       case Nil => Nil
       case List(game: ScheduledGame, _*) => {
-        val (_, remainingRows) = rows span(_.id == game.id)
+        val (_, remainingRows) = rows span (_.id == game.id)
         game :: processGames(remainingRows)
       }
       case List(game: CompletedGame, _*) => {
-        val (thisGameRows: List[CompletedGame], remainingRows) = rows span(_.id == game.id)
-        thisGameRows.reduceLeft((g1, g2) => g1.copy(team1Wins = g1.team1Wins + g2.team1Wins, team2Wins = g1.team2Wins + g2.team2Wins, setScores = g1.setScores ++ g2.setScores )) :: processGames(remainingRows)
+        val (thisGameRows, remainingRows) = rows span (_.id == game.id)
+        // we know if the first one is a CompletedGame, the others in the result set will also be (until we get to the next game)
+        // asInstanceOf here seems to avoid the compiler's scary "unchecked since it is eliminated by erasure" warning.
+        thisGameRows.asInstanceOf[List[CompletedGame]].reduceLeft((g1, g2) => g1.copy(team1Wins = g1.team1Wins + g2.team1Wins, team2Wins = g1.team2Wins + g2.team2Wins, setScores = g1.setScores ++ g2.setScores)) :: processGames(remainingRows)
       }
     }
   }
