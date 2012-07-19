@@ -1,10 +1,74 @@
+dl {
+    width: 25em;
+}
 
-dl { width: 25em; }
-dt { text-align: right; font-weight: bold; float: left; width: 8em; background-color: #95b6cb; color: #093; }
-dt.nobg { background: none; }
-dd { margin: 0 0 0.4em 3.0em; float: left; }
-dd.info { font-size: 10px; margin: 0 0.5em 0.2em 0; }
+dt {
+    text-align: right;
+    font-weight: bold;
+    float: left;
+    width: 8em;
+    background-color: #95b6cb;
+    color: #093;
+}
 
-p.clear { clear: both; }
+dt.nobg {
+    background: none;
+}
 
-#teams { vertical-align: top; float: right; }
+dd {
+    margin: 0 0 0.4em 3.0em;
+    float: left;
+}
+
+dd.info {
+    font-size: 10px;
+    margin: 0 0.5em 0.2em 0;
+}
+
+p.clear {
+    clear: both;
+}
+
+#teams {
+    vertical-align: top;
+}
+
+#completedWeek li {
+    background-image: url(../images/vbicon.jpg);
+    background-repeat: no-repeat;
+    background-position: .1 .4em;
+    padding-left: 1.8em;
+}
+
+#completedWeek ul {
+    list-style-type: none; padding: 0; margin: 0;
+}
+
+/*.navcontainer ul {*/
+    /*padding-left: 0;*/
+    /*margin-left: 0;*/
+    /*background-color: #237FBE;*/
+    /*color: White;*/
+    /*float: left;*/
+    /*width: 100%;*/
+    /*font-family: arial, helvetica, sans-serif;*/
+/*}*/
+
+/*.navcontainer ul li {*/
+    /*display: inline;*/
+/*}*/
+
+/*.navcontainer ul li a {*/
+    /*padding: 0.2em 1em;*/
+    /*background-color: #237FBE;*/
+    /*color: White;*/
+    /*text-decoration: none;*/
+    /*float: left;*/
+    /*border-right: 1px solid #fff;*/
+/*}*/
+
+/*.navcontainer ul li a:hover {*/
+    /*background-color: #369;*/
+    /*color: #fff;*/
+/*}*/
+

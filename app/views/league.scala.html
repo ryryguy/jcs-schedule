@@ -8,56 +8,54 @@
 
 <p><h3 align="center">Current Season -
 
-@season match {
-case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
-<span >
-                <table style="margin: auto;" cellspacing="10">
-                    <tr>
-                        <td><a href="@routes.SeasonController.schedule(s.id.get)">Complete Schedule</a></td>
-                        <td><a href="@routes.SeasonController.standings(s.id.get)">Standings</a></td>
-                    </tr>
-                </table>
-            </span>
+    @season match {
+    case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
+<p class="clear"/>
+<div id="menu" style="width: 100%">
+    <ul>
+        <li><a id="current" onclick="$('#summary').show();$('#teams').hide()">Summary</a></li>
+        <li><a onclick="$('#summary').hide();$('#teams').show()">Teams</a></li>
+        <li><a href="@routes.SeasonController.schedule(s.id.get)" style="position: relative;">Complete Schedule</a></li>
+        <li><a href="@routes.SeasonController.standings(s.id.get)" style="position: relative;">Standings</a></li>
+    </ul>
+</div>
+
+<div id="summary">
+    @week(lastWeek, "Last Week's Games", teams)
+    @week(nextWeek, "Next Week's Games", teams)
+</div>
+
+<div id="teams">
+    @for((_,team) <- teams) {
+    <p>
+    @team.name <i>(@team.captainName)</i>
+        <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
+    </p>
+    }
+</div>
 
 <p class="clear"/>}
 case None => {None</h3>}
 }
 
-@if(season != None) {
-<table>
-    <tr>
-        <td>
-            @week(lastWeek, "Last Week's Games", teams)
-            @week(nextWeek, "Next Week's Games", teams)
-        </td>
-        @if(teams.isEmpty == false) {
-        <td id="teams"><h4>Teams:</h4><br/>
-            @for((_,team) <- teams) {
-                @team.name <i>(@team.captainName)</i>
-                <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
-                <br/>
-            }
-        </td>
-        }
-    </tr>
-</table>
-}
-
 @hline()
 
 <p><h3 align="center">Next Season -
-@nextSeason match {
-case Some(s) => {Will start on on @s.start_date.toString("MM/dd/yy")}
-case None => {Not scheduled yet}
-}  </h3>
+    @nextSeason match {
+    case Some(s) => {Will start on on @s.start_date.toString("MM/dd/yy")}
+    case None => {Not scheduled yet}
+    } </h3>
 
 @boardpanel {
 <div>
     <h3>Edit this league:</h3>
 
     <p>TODO: Edit league form, add season, add/remove teams, email captains</p>
+
     <p></p>
+
     <h3>League News</h3>
+
     <p>TODO (maybe)</p>
 
 </div>
