@@ -22,7 +22,7 @@ import java.util.Date
 
 abstract class Week() {
   def id: Pk[Long]
-
+  def playoff: Boolean
   def gameDate: DateTime
 }
 

@@ -5,7 +5,6 @@
     <h4>@title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)</h4>
     @week match {
     case WeekScheduled(_,_,_, playoff, games) => {
-    @if(playoff) { <img src='@routes.Assets.at("images/playoffs.jpg")'/> }
     <ul class="vblist">
         @for(game <- games.sortBy(g => (g.startTime.getHourOfDay, g.court))) {
         <li class="vblist">
@@ -16,7 +15,6 @@
     </ul>
     }
     case WeekCompleted(_,_,_,playoff,games) => {
-    @if(playoff) { <img src='@routes.Assets.at("images/playoffs.jpg")'/> }
     <ul class="vblist">
         @for(game <- games) {
         @if(game.team1Wins > game.team2Wins) {
@@ -32,11 +30,13 @@
     </ul>
     }
 
-    case WeekUnscheduled(_,_,_,_) => {
+    case WeekUnscheduled(_,_,_,playoff) => {
     (Games not yet scheduled)
     }
     }
-    <br>
 </div>
+@if(week.playoff) {
+<div class="playoff"><img src='@routes.Assets.at("images/playoffs.jpg")'/></div>  }
+<p class="clear"/>
 }
 

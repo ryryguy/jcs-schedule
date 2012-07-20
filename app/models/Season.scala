@@ -16,14 +16,17 @@ import controllers.Application
  * To change this template use File | Settings | File Templates.
  */
 
-class Season(val id: Pk[Long] = NotAssigned, val leagueName: String, val start_date: LocalDate, val completed: Boolean,
+class Season(val id: Pk[Long] = NotAssigned, val leagueName: String, val leagueId: Pk[Long], val start_date: LocalDate, val completed: Boolean,
              val weeksRegular: Int, val weeksPlayoffs: Int, val byes: Int, val doubleheaders: Int)
 
 abstract class LeagueSeason {
   def s: Season
 }
+
 case class CurrentSeason(s: Season) extends LeagueSeason
+
 case class CompletedSeason(s: Season) extends LeagueSeason
+
 case class NextSeason(s: Season) extends LeagueSeason
 
 
@@ -36,9 +39,10 @@ object Season {
       int("season.weeks_playoffs") ~
       int("season.byes") ~
       int("season.doubleheaders") ~
-      str("league.league_name") map {
-      case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name
-      => new Season(id, league_name, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
+      str("league.league_name") ~
+      get[Pk[Long]]("league.id") map {
+      case id ~ start_date ~ completed ~ weeks_Regular ~ weeks_Playoffs ~ byes ~ doubleheaders ~ league_name ~ league_id
+      => new Season(id, league_name, league_id, new LocalDate(start_date), completed, weeks_Regular, weeks_Playoffs, byes, doubleheaders)
     }
   }
 
@@ -51,15 +55,20 @@ object Season {
         .executeInsert()
   }
 
+  private val seasonSelect = "select s.*, l.league_name, l.id from season s join league l on s.league_id = l.id where "
+
+  private def seasonSelectWhere(where: String) = seasonSelect.concat(where)
+
+  def findById(seasonId: Long): Option[Season] = DB.withConnection {
+    implicit c =>
+      SQL(seasonSelectWhere("s.id = {id}")).
+        on('id -> seasonId).singleOpt(season)
+  }
+
   def getForLeague(leagueId: Long): List[LeagueSeason] = {
     val seasons = DB.withConnection {
       implicit c =>
-        SQL(
-          """
-          select s.*, l.league_name from season s
-          join league l on s.league_id = l.id
-          where s.league_id = {leagueId}
-          """).
+        SQL(seasonSelectWhere("s.league_id = {leagueId}")).
           on('leagueId -> leagueId).as(season *)
     }
 
@@ -71,27 +80,17 @@ object Season {
     }
   }
 
-  def current(leagueId: Long) : Option[Season] = DB.withConnection {
+  def current(leagueId: Long): Option[Season] = DB.withConnection {
     implicit c =>
-      SQL(
-        """
-          select s.*, l.league_name from season s
-          join league l on s.league_id = l.id
-          where league_id = {leagueId} and completed = false and start_date <= {today}
-        """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toDate).
-        as(season.singleOpt)
+      SQL(seasonSelectWhere("league_id = {leagueId} and completed = false and start_date <= {today}"))
+        .on('leagueId -> leagueId, 'today -> new DateMidnight().toDate)
+        .as(season.singleOpt)
   }
 
-  def next(leagueId: Long) : Option[Season] = DB.withConnection {
+  def next(leagueId: Long): Option[Season] = DB.withConnection {
     implicit c =>
-      SQL(
-        """
-          select s.*, l.league_name from season s
-            join league l on s.league_id = l.id
-            where league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1
-        """).
-        on('leagueId -> leagueId, 'today -> new DateMidnight().toDate).
-        as(season.singleOpt)
+      SQL(seasonSelectWhere("league_id = {leagueId} and completed = false and start_date > {today} order by start_date limit 1"))
+        .on('leagueId -> leagueId, 'today -> new DateMidnight().toDate)
+        .as(season.singleOpt)
   }
 }

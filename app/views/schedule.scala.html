@@ -1,0 +1,11 @@
+@(season:Season, teams:Map[Long, Team], weeks: Seq[Week])
+
+@import helper._
+@import tags._
+
+<h2>@season.leagueName</h2>
+
+@for(i <- 0 until weeks.size;w = weeks(i)) {
+@week(Option(w), "Week " + (i+1), teams)
+<br>
+}
