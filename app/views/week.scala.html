@@ -1,8 +1,10 @@
 @(weekOption:Option[Week], title:String, teams:Map[Long, Team])
 @* for loop weeds out None *@
 @for(week <- weekOption) {
+<h4>@title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)</h4>
+@if(week.playoff) {
+<div class="playoff"><img src='@routes.Assets.at("images/playoffs.jpg")'/></div>  }
 <div class="week">
-    <h4>@title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)</h4>
     @week match {
     case WeekScheduled(_,_,_, playoff, games) => {
     <ul class="vblist">
@@ -35,8 +37,6 @@
     }
     }
 </div>
-@if(week.playoff) {
-<div class="playoff"><img src='@routes.Assets.at("images/playoffs.jpg")'/></div>  }
 <p class="clear"/>
 }
 

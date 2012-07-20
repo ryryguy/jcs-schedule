@@ -54,7 +54,7 @@ li.vblist {
     opacity:0.8;
     filter:alpha(opacity=80); /* For IE8 and earlier */
     float: left;
-    margin: 10px 0 0 20px;
+    margin: 12px 10px 0 0;
 
 }
 
