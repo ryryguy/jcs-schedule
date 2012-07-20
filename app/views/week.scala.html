@@ -5,35 +5,28 @@
     <h4>@title: @week.gameDate.toString(Application.VIEW_DATE_PATTERN)</h4>
     @week match {
     case WeekScheduled(_,_,_, playoff, games) => {
-    <table>
-        @if(playoff) {
-        <caption><b>-- Playoff! --</b></caption>
-        }
-        <thead>
-        <tr>
-            <td>Time</td>
-            <td>Court</td>
-            <td>Teams</td>
-        </tr>
-        </thead>
-        <tbody>
+    @if(playoff) { <img src='@routes.Assets.at("images/playoffs.jpg")'/> }
+    <ul class="vblist">
         @for(game <- games.sortBy(g => (g.startTime.getHourOfDay, g.court))) {
-        <tr>
-            <td>@game.startTime.toString(Application.VIEW_TIME_PATTERN)</td>
-            <td>@game.court</td>
-            <td>@teams(game.team1Id).name vs @teams(game.team2Id).name</td>
-        </tr>
+        <li class="vblist">
+            @game.startTime.toString(Application.VIEW_TIME_PATTERN), court @game.court: @teams(game.team1Id).name vs
+            @teams(game.team2Id).name
+        </li>
         }
-        </tbody>
-    </table>
+    </ul>
     }
     case WeekCompleted(_,_,_,playoff,games) => {
-    <ul id="completedWeek" style="list-style-type: none; padding: 0; margin-left: 2em;">
+    @if(playoff) { <img src='@routes.Assets.at("images/playoffs.jpg")'/> }
+    <ul class="vblist">
         @for(game <- games) {
         @if(game.team1Wins > game.team2Wins) {
-        <li><b>@teams(game.team1Id).name @game.team1Wins</b>, @teams(game.team2Id).name @game.team2Wins (@game.setScores.mkString(", "))</li>
+        <li class="vblist"><b>@teams(game.team1Id).name @game.team1Wins</b>, @teams(game.team2Id).name @game.team2Wins
+            (@game.setScores.mkString(", "))
+        </li>
         } else {
-        <li>@teams(game.team1Id).name @game.team1Wins, <b>@teams(game.team2Id).name @game.team2Wins</b> (@game.setScores.mkString(", "))</li>
+        <li class="vblist">@teams(game.team1Id).name @game.team1Wins, <b>@teams(game.team2Id).name @game.team2Wins</b>
+            (@game.setScores.mkString(", "))
+        </li>
         }
         }
     </ul>

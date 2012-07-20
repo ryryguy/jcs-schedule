@@ -2,17 +2,17 @@
 
 @import tags._
 
-<link rel="stylesheet" type="text/css" href='@routes.Assets.at("stylesheets/diQuery-collapsiblePanel.css")'>
-<script src='@routes.Assets.at("javascripts/diQuery-collapsiblePanel.js")' type="text/javascript"></script>
-
 @hline()
-<div id="admin-panel" class="collapsibleContainer" title="JCS Boardmember">
-    @content
+<div id="admin-panel">
+    <h3>JCS Boardmember</h3>
+    <div>
+        @content
+    </div>
 </div>
 
 <script language="javascript" type="text/javascript">
-    $(document).ready(function() {
-        $("#admin-panel").collapsiblePanel();
-        CollapsibleContainerTitleOnClick();
+    $(document).ready(function () {
+        $("#admin-panel").accordion({ collapsible: true });
+        $("#admin-panel").accordion("activate", false);
     });
 </script>

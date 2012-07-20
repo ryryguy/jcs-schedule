@@ -11,27 +11,30 @@
     @season match {
     case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
 <p class="clear"/>
-<div id="menu" style="width: 100%">
+
+<div id="tabs" style="width: 100%">
     <ul>
-        <li><a id="current" onclick="$('#summary').show();$('#teams').hide()">Summary</a></li>
-        <li><a onclick="$('#summary').hide();$('#teams').show()">Teams</a></li>
-        <li><a href="@routes.SeasonController.schedule(s.id.get)" style="position: relative;">Complete Schedule</a></li>
-        <li><a href="@routes.SeasonController.standings(s.id.get)" style="position: relative;">Standings</a></li>
+        <li><a href="#recent">Recent</a></li>
+        <li><a href="#teams">Teams</a></li>
+        <li><a href="@routes.SeasonController.schedule(s.id.get)">Complete Schedule</a></li>
+        <li><a href="@routes.SeasonController.standings(s.id.get)">Standings</a></li>
     </ul>
-</div>
 
-<div id="summary">
-    @week(lastWeek, "Last Week's Games", teams)
-    @week(nextWeek, "Next Week's Games", teams)
-</div>
 
-<div id="teams">
-    @for((_,team) <- teams) {
-    <p>
-    @team.name <i>(@team.captainName)</i>
-        <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
-    </p>
-    }
+    <div id="recent">
+        @week(lastWeek, "Last Week's Games", teams)
+        @week(nextWeek, "Next Week's Games", teams)
+    </div>
+
+    <div id="teams">
+        @for((_,team) <- teams) {
+        <p>
+            @team.name <i>(@team.captainName)</i>
+            <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
+        </p>
+        }
+    </div>
+
 </div>
 
 <p class="clear"/>}
@@ -59,6 +62,12 @@ case None => {None</h3>}
     <p>TODO (maybe)</p>
 
 </div>
+
+<script>
+    $(function () {
+        $("#tabs").tabs({cache: true, ajaxOptions: {cache: false}});
+    });
+</script>
 
 }
 }
