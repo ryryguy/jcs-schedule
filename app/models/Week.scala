@@ -49,7 +49,6 @@ object Week {
       case id ~ season_id ~ game_date ~ playoff ~ _ => WeekUnscheduled(id, season_id, new DateTime(game_date), playoff)
     }
   }
-
   def processWeeks(rows: List[Week]): List[Week] =
     rows match {
       case Nil => Nil
@@ -79,6 +78,24 @@ object Week {
           """
         )
           .on('season_id -> seasonId)
+          .as(weekWithGamesParser *))
+      ).sorted
+  }
+
+  def findByTeamId(seasonId: Long, teamId: Long): List[Week] = DB.withConnection {
+    implicit c =>
+      processWeeks(
+        (SQL(
+          """
+    SELECT * FROM week
+    LEFT OUTER JOIN game ON game.week_id = week.id
+    LEFT OUTER JOIN set ON set.game_id = game.id
+    WHERE week.season_id = {season_id}
+    AND (game.team1_id = {team_id} OR game.team2_id = {team_id})
+    ORDER BY week.id, game.id, set.num
+          """
+        )
+          .on('season_id -> seasonId, 'team_id -> teamId)
           .as(weekWithGamesParser *))
       ).sorted
   }

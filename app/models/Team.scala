@@ -56,17 +56,19 @@ object Team {
     implicit c =>
       SQL("insert into team2league (league_id, team_id) values ({league_id}, {team_id})")
         .on('league_id -> leagueId, 'team_id -> teamId)
-      .executeInsert()
+        .executeInsert()
   }
 
-  def findByLeagueId(leagueId: Long, includeEmail: Boolean) : List[Team] = DB.withConnection {
+  def findByLeagueId(leagueId: Long, includeEmail: Boolean): List[Team] = DB.withConnection {
     implicit c =>
-      SQL("""
+      SQL( """
           select team.* from team
           join team2league t2l on t2l.league_id = {league_id}
           where team.id = t2l.team_id
-          """)
-      .on('league_id -> leagueId)
-      .as((if(includeEmail) team else teamNoEmail) *)
+           """)
+        .on('league_id -> leagueId)
+        .as((if (includeEmail) team else teamNoEmail) *)
   }
+
+  def mapById(teams: List[Team]): Map[Long, Team] = teams.groupBy(_.id.get).mapValues(_.head)
 }

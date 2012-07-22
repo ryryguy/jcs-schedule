@@ -31,7 +31,8 @@
         @for((_,team) <- teams) {
         <p>
             @team.name <i>(@team.captainName)</i>
-            <a href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
+            <a class="team-schedule" title="@team.name Schedule"
+               href="@routes.SeasonController.teamSchedule(season.get.id.get, team.id.get)">schedule</a>
         </p>
         }
     </div>
@@ -65,9 +66,41 @@ case None => {None</h3>}
 </div>
 
 <script>
-    $(function () {
-        $("#tabs").tabs({cache: true, ajaxOptions: {cache: false}});
+    $(document).ready(function () {
+        $("#tabs").tabs({
+            cache:true,
+            ajaxOptions:{
+                cache:false,
+                dataFilter:function (data) {
+                    return $(data).find("div #schedule-content")
+                }
+            }
+        });
+
+        $('.team-schedule').each(function () {
+            var $link = $(this);
+            var $dialog = $('<div></div>')
+                    .dialog({
+                        autoOpen:false,
+                        resizable:true,
+                        title:$link.attr('title'),
+                        width:500,
+                        maxHeight:800
+                    });
+
+            $link.click(function () {
+                if (!$dialog.is("div #schedule-content")) {
+                    $dialog.load($link.attr('href') + ' #schedule-content')
+                }
+                $dialog.dialog('open');
+
+                return false;
+            });
+        });
+
     });
+
+
 </script>
 
 }

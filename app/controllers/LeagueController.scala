@@ -60,6 +60,6 @@ object LeagueController extends Controller {
     } else {
       (None, None)
     }
-    Ok(views.html.league(league, Team.findByLeagueId(id, false).groupBy(_.id.get).mapValues(_.head), currentSeason, Season.next(id), lastWeek, nextWeek))
+    Ok(views.html.league(league, Team.mapById(Team.findByLeagueId(id, false)), currentSeason, Season.next(id), lastWeek, nextWeek))
   }
 }
