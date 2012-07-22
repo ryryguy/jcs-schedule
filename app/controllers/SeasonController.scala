@@ -2,7 +2,6 @@ package controllers
 
 import play.api.mvc.{Action, Controller}
 import models.{Team, Week, Season}
-import com.sun.imageio.plugins.jpeg.JPEG.JCS
 
 /**
  * Created with IntelliJ IDEA.
