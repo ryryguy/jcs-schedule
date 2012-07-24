@@ -28,11 +28,11 @@ import views.html.week
 case class Set(num: Int, gameId: Long, team1Score: Option[Int], team2Score: Option[Int])
 
 object Set {
-//  val setParser = {
-//    int("set.num") ~ long("set.game_id") ~ get[Option[Int]]("set.team1_score") ~ get[Option[Int]]("set.team2_score") map {
-//      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
-//    }
-//  }
+  //  val setParser = {
+  //    int("set.num") ~ long("set.game_id") ~ get[Option[Int]]("set.team1_score") ~ get[Option[Int]]("set.team2_score") map {
+  //      case num ~ game_id ~ team1_score ~ team2_score => new Set(num, game_id, team1_score, team2_score)
+  //    }
+  //  }
 
   def create(num: Short, gameId: Long, team1Score: Option[Short] = None, team2Score: Option[Short] = None): Option[Long] = DB.withConnection {
     implicit c =>
@@ -133,6 +133,26 @@ object Game {
         .as(gamesAndSetsParser *)
       )
   }
+
+  def findCompletedGamesForSeason(seasonId: Long): scala.List[CompletedGame] = DB.withConnection {
+    implicit c =>
+      processGames(SQL(
+        """
+           SELECT game.*, set.* FROM game
+           LEFT OUTER JOIN set ON set.game_id = game.id
+           JOIN week ON game.week_id = week.id
+           WHERE week.season_id = {season_id}
+            AND set.team1_score IS NOT NULL and set.team2_score IS NOT NULL
+           ORDER BY game.week_id, game.start_time, game.court, set.num
+        """
+      )
+        .on('season_id -> seasonId)
+        .as(gamesAndSetsParser *)
+      ).map {
+        case g: CompletedGame => g
+      }
+  }
+
 
   def scoreSet(gameId: Long, setNum: Short, team1Score: Short, team2Score: Short) = DB.withConnection {
     implicit c =>

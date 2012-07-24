@@ -46,7 +46,7 @@ object Application extends Controller {
     val weeksPlayoffs: Short = 2;
 
     val season1Id = Season.create(league1Id.get, lastThursday, weeksRegular, weeksPlayoffs, 0, 0)
-    Season.create(league2Id.get, new DateTime(2012,10,4,0,0), 10, 2, 1, 0)
+    Season.create(league2Id.get, new DateTime(2012,10,4,0,0), 10, 3, 1, 0)
 
     val gameWeekIds = for (i <- 0 until weeksRegular + weeksPlayoffs;
                             gameDateTime = lastThursday.plusWeeks(i)) yield (
@@ -67,10 +67,6 @@ object Application extends Controller {
 
     val matchIds = for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2) yield (
       Game.create(gameWeekIds(i), new LocalTime(18, 0), iMatch + 1, team1, team2)
-      )
-
-    for (i <- 0 until matches.length; iMatch <- 0 to 1; val (team1, team2) = if (iMatch == 0) matches(i)._1 else matches(i)._2)  (
-      Game.create(gameWeekIds(i), new LocalTime(17, 15), iMatch + 1, team1, team2)
       )
 
     Logger.info("Game ids: " + matchIds.toString)

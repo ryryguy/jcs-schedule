@@ -43,6 +43,8 @@ class GameModelTest extends Specification {
     val gamesForWeek1: List[Game] = Game.findByWeekId(week1WithGamesId)
     val gamesForWeek2: List[Game] = Game.findByWeekId(week2WithGamesId)
 
+    val completedGamesForSeason: List[CompletedGame] = Game.findCompletedGamesForSeason(seasonId)
+
     "The Game model interface" should {
 
       "retrieve all games for a week" in {
@@ -77,6 +79,11 @@ class GameModelTest extends Specification {
       "indicate the correct set scores for a CompletedGame" in {
         gamesForWeek1(0).asInstanceOf[CompletedGame].setScores aka "Game 1 set scores" must contain("25-23", "22-25", "25-13").inOrder and have size 3
         gamesForWeek1(1).asInstanceOf[CompletedGame].setScores aka "Game 2 set scores" must contain("22-25", "25-27", "18-25").inOrder and have size 3
+      }
+
+      "return all completed games for a Season" in {
+        completedGamesForSeason must have size 2
+        completedGamesForSeason map (_.id.get) must contain(week1Game1Id, week1Game2Id)
       }
     }
 
