@@ -50,33 +50,62 @@ class SeasonControllerTest extends Specification {
       }
 
       "Calculate correct win loss records for each team" in {
-        val winLossRecords: Map[Long, WinLossRecord] = standings.groupBy(_.teamId).mapValues(sl => WinLossRecord(sl.head.wins, sl.head.losses))
+        val winLossRecords: Map[Long, WinLossRecord] = standings.groupBy(_.teamId).mapValues(sl => WinLossRecord(sl.head.teamId, sl.head.wins, sl.head.losses))
         winLossRecords must havePairs(
-          (teamIds(0) -> WinLossRecord(2, 1)),
-          (teamIds(1) -> WinLossRecord(1, 2)),
-          (teamIds(2) -> WinLossRecord(0, 3)),
-          (teamIds(3) -> WinLossRecord(3, 0)))
+          (teamIds(0) -> WinLossRecord(teamIds(0), 2, 1)),
+          (teamIds(1) -> WinLossRecord(teamIds(1), 1, 2)),
+          (teamIds(2) -> WinLossRecord(teamIds(2), 0, 3)),
+          (teamIds(3) -> WinLossRecord(teamIds(3), 3, 0)))
       }
 
       "Calculate correct place for each team when there are no ties" in {
         standings must contain(
-          StandingsLine(1, teamIds(3), 3, 0),
-          StandingsLine(2, teamIds(0), 2, 1),
-          StandingsLine(3, teamIds(1), 1, 2),
-          StandingsLine(4, teamIds(2), 0, 3)
-        )
+          StandingsLine(teamIds(3), 3, 0),
+          StandingsLine(teamIds(0), 2, 1),
+          StandingsLine(teamIds(1), 1, 2),
+          StandingsLine(teamIds(2), 0, 3)
+        ).inOrder
       }
 
-      "Break ties using head to head matchups" in {
+      "Break two-team ties using head to head matchups" in {
+        val games = List(
+          makeGame(1, 2, 3, 0),
+          makeGame(3, 4, 2, 1),
+          makeGame(2, 3, 3, 0),
+          makeGame(4, 1, 3, 0)
+        );
+
+        SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
+          StandingsLine(4, 4, 2),
+          StandingsLine(1, 3, 3, 1),
+          StandingsLine(2, 3, 3, 2),
+          StandingsLine(3, 2, 4)
+        ).inOrder
+
+      }
+
+      "Indicate two-team ties stay tied where head to head matchups are equal" in {
         todo
       }
 
-      "Indicate ties where head to head matchups are equal" in {
+      "Indicate two-team ties stay tied where head to head matchups don't exist" in {
         todo
       }
 
-      "Indicate ties where multiple head to head matchups are equal" in {
+      "Break three-team ties where one team beat the other two, falling back to two-team rules for the remainder" in {
+        todo
+      }
+
+      "Indicate three-team ties stay tied when no one team beats both others head-to-head" in {
         // i.e, A, B and C have the same record, in head-to-head A > B, B > C, C > A
+        todo
+      }
+
+      "Indicate four+-team ties stay tied (for now?)" in {
+        todo
+      }
+
+      "Break multiple two-way ties" in {
         todo
       }
 
@@ -89,7 +118,8 @@ class SeasonControllerTest extends Specification {
         // might just work when tie breaks implemented
         todo
       }
-
     }
   }
+
+  def makeGame(team1: Long, team2: Long, team1Wins: Int, team2Wins: Int) = CompletedGame(NotAssigned, 0, team1, team2, team1Wins, team2Wins, List())
 }
