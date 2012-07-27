@@ -77,19 +77,61 @@ class SeasonControllerTest extends Specification {
 
         SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
           StandingsLine(4, 4, 2),
-          StandingsLine(1, 3, 3, 1),
-          StandingsLine(2, 3, 3, 2),
+          StandingsLine(1, 3, 3, Some(1)),
+          StandingsLine(2, 3, 3, Some(2)),
           StandingsLine(3, 2, 4)
         ).inOrder
 
       }
 
       "Indicate two-team ties stay tied where head to head matchups are equal" in {
-        todo
+        val games = List(
+          makeGame(1, 2, 3, 0),
+          makeGame(3, 4, 1, 2),
+          makeGame(4, 3, 3, 0),
+          makeGame(2, 1, 3, 0)
+        );
+
+        SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
+          StandingsLine(4, 5, 1),
+          StandingsLine(1, 3, 3, Some(1)),
+          StandingsLine(2, 3, 3, Some(1)),
+          StandingsLine(3, 1, 5)
+        ).inOrder
       }
 
       "Indicate two-team ties stay tied where head to head matchups don't exist" in {
-        todo
+        val games = List(
+          makeGame(1, 4, 3, 0),
+          makeGame(2, 4, 1, 2),
+          makeGame(1, 3, 1, 2),
+          makeGame(2, 3, 3, 0),
+          makeGame(3, 4, 3, 0)
+        );
+
+        SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
+          StandingsLine(1, 4, 2, Some(-1)),
+          StandingsLine(2, 4, 2, Some(-1)),
+          StandingsLine(3, 5, 4),
+          StandingsLine(4, 2, 7)
+        ).inOrder
+      }
+
+      "Indicate three+-team ties stay tied (for now)" in {
+        val games = List(
+          makeGame(1, 4, 3, 0),
+          makeGame(2, 3, 1, 2),
+          makeGame(1, 3, 1, 2),
+          makeGame(2, 4, 3, 0),
+          makeGame(3, 4, 2, 1)
+        );
+
+        SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
+          StandingsLine(1, 4, 2, Some(-1)),
+          StandingsLine(2, 4, 2, Some(-1)),
+          StandingsLine(3, 6, 3, Some(-1)),
+          StandingsLine(4, 1, 8)
+        ).inOrder
       }
 
       "Break three-team ties where one team beat the other two, falling back to two-team rules for the remainder" in {
@@ -106,17 +148,22 @@ class SeasonControllerTest extends Specification {
       }
 
       "Break multiple two-way ties" in {
-        todo
-      }
+        val games = List(
+          makeGame(1, 2, 3, 0),
+          makeGame(3, 4, 2, 1),
+          makeGame(4, 3, 3, 0),
+          makeGame(2, 1, 3, 0),
+          makeGame(3, 5, 3, 0),
+          makeGame(4, 5, 1, 2)
+        );
 
-      "Calculate correct places when there are an unequal number of games played due to byes" in {
-        // should work already I think?
-        todo
-      }
-
-      "Break ties correctly when there are an unequal number of games played due to byes" in {
-        // might just work when tie breaks implemented
-        todo
+        SeasonController.calculateHeadToHead(games, SeasonController.calculateWinLoss(games).toSeq) must contain(
+          StandingsLine(4, 5, 4, Some(1)),
+          StandingsLine(3, 5, 4, Some(2)),
+          StandingsLine(1, 3, 3, Some(1)),
+          StandingsLine(2, 3, 3, Some(1)),
+          StandingsLine(5, 2, 4)
+        ).inOrder
       }
     }
   }

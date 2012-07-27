@@ -15,7 +15,7 @@ case class WinLossRecord(teamId: Long, wins: Int, losses: Int) {
   def +(that: WinLossRecord) = this.copy(wins = wins + that.wins, losses = losses + that.losses)
 }
 
-case class StandingsLine(teamId: Long, wins: Int, losses: Int, htH: Int = 0) {
+case class StandingsLine(teamId: Long, wins: Int, losses: Int, htH: Option[Int] = None) {
   def % : Float = wins.toFloat / (wins.toFloat + losses.toFloat)
 }
 
@@ -51,7 +51,7 @@ object SeasonController extends Controller {
     Ok("Standings Here - TODO")
   }
 
-  val standingsOrdering: Ordering[StandingsLine] = Ordering.by[StandingsLine, (Float, Int)](sl => (1.0f - sl.%, sl.htH))
+  val standingsOrdering: Ordering[StandingsLine] = Ordering.by[StandingsLine, (Float, Option[Int])](sl => (1.0f - sl.%, sl.htH))
 
   def calculateHeadToHead(games: Seq[CompletedGame], winLossRecords: Seq[WinLossRecord]): Seq[StandingsLine] = {
     val standings = (for (wl <- winLossRecords) yield StandingsLine(wl.teamId, wl.wins, wl.losses)).groupBy(_.%).values.flatMap {
@@ -61,18 +61,19 @@ object SeasonController extends Controller {
           case Seq(l1: StandingsLine, l2: StandingsLine) => {
             val headToHeadGames: Seq[CompletedGame] = games.filter((game: CompletedGame) => (game.team1Id == l1.teamId && game.team2Id == l2.teamId) || (game.team1Id == l2.teamId && game.team2Id == l1.teamId))
             if (headToHeadGames.isEmpty)
-              Seq(l1.copy(htH = -1), l2.copy(htH = -1))
+              Seq(l1.copy(htH = Some(-1)), l2.copy(htH = Some(-1)))
             else {
               val headToHeadWL = calculateWinLoss(headToHeadGames)
               if (headToHeadWL.head.wins == headToHeadWL.head.losses)
-                Seq(l1.copy(htH = 1), l2.copy(htH = 1))
+                Seq(l1.copy(htH = Some(1)), l2.copy(htH = Some(1)))
               else
               if (headToHeadWL.maxBy(_.wins).teamId == l1.teamId)
-                Seq(l1.copy(htH = 1), l2.copy(htH = 2))
+                Seq(l1.copy(htH = Some(1)), l2.copy(htH = Some(2)))
               else
-                Seq(l1.copy(htH = 2), l2.copy(htH = 1))
+                Seq(l1.copy(htH = Some(2)), l2.copy(htH = Some(1)))
             }
           }
+          case Seq(_*) => seq map(_.copy(htH = Some(-1)))
         }
     }
 
