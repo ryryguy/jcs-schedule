@@ -5,7 +5,7 @@ import play.api.data.Form
 import play.api.data.Forms._
 import models.{Team, Week, Season, League}
 import anorm.{Pk, NotAssigned}
-import org.joda.time.DateMidnight
+import org.joda.time.{DateTimeZone, DateMidnight}
 
 /**
  * Created with IntelliJ IDEA.
@@ -55,7 +55,7 @@ object LeagueController extends Controller {
     val (lastWeek, nextWeek) = if(currentSeason.isDefined) {
       val games: List[Week] = Week.findBySeasonId(currentSeason.get.id.get)
       val (b, a) = games
-          .partition(p => p.gameDate.isBefore(new DateMidnight()))
+          .partition(p => p.gameDate.isBefore(new DateMidnight(DateTimeZone.forID("America/Los_Angeles"))))
       (if(b.isEmpty) None else Some(b.max), if(a.isEmpty) None else Some(a.min))
     } else {
       (None, None)
