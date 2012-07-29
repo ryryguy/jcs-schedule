@@ -51,12 +51,43 @@ li.vblist {
 }
 
 .playoff {
-    opacity:0.8;
-    filter:alpha(opacity=80); /* For IE8 and earlier */
+    opacity: 0.8;
+    filter: alpha(opacity = 80); /* For IE8 and earlier */
     float: left;
     margin: 12px 10px 0 0;
 
 }
+
+#standings td, #standings th {
+    border:1px solid #98bf21
+}
+
+#standings tr.alt td
+{
+    color:#000000;
+    background-color:#EAF2D3;
+}
+
+a.no-line-link:link {
+    text-decoration: none;
+    color: black;
+}
+
+a.no-line-link:visited {
+    text-decoration: none;
+    color: black;
+}
+
+a.no-line-link:hover {
+    text-decoration: underline;
+    color: #2180BC;
+}
+
+a.no-line-link:active {
+    text-decoration: underline;
+    color: #2180BC;
+}
+
 
 /*.navcontainer ul {*/
 /*padding-left: 0;*/

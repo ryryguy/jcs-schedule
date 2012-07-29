@@ -40,10 +40,10 @@ object Application extends Controller {
 
     Logger.info("League ids: " + league1Id + ", " + league2Id)
 
-    val lastThursday = new DateTime().withDayOfWeek(DateTimeConstants.THURSDAY).minusWeeks(1).withTime(18, 15, 0, 0)
+    val lastThursday = new DateTime().minusWeeks(1).withDayOfWeek(DateTimeConstants.THURSDAY).withTime(18, 15, 0, 0)
 
-    val weeksRegular: Short = 2;
-    val weeksPlayoffs: Short = 2;
+    val weeksRegular: Short = 3;
+    val weeksPlayoffs: Short = 1;
 
     val season1Id = Season.create(league1Id.get, lastThursday, weeksRegular, weeksPlayoffs, 0, 0)
     Season.create(league2Id.get, new DateTime(2012,10,4,0,0), 10, 3, 1, 0)

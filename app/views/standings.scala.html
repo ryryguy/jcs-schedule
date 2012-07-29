@@ -1,0 +1,69 @@
+@(title:String, heading:String, seasonId:Long, teams:Map[Long, Team], standings: Seq[StandingsLine])
+
+@import helper._
+@import tags._
+
+@main(title = title) {
+
+<h2>@heading</h2>
+
+<div id="content">
+    <table id="standings">
+        <thead>
+        <tr>
+            <th>Team</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Win %</th>
+            <th>HtH<span class="ui-icon ui-icon-help"
+                         title="Head-to-head tie breaker
+(for two-team ties only)" style="display:inline-block"></span></th>
+        </tr>
+        </thead>
+        <tbody>
+        @for(i <- 0 until standings.length; line = standings(i)) {
+        <tr @if(i % 2 == 1){class="alt"}>
+            <td><a href="@routes.SeasonController.teamSchedule(seasonId, line.teamId)" class="no-line-link team-schedule">@teams(line.teamId).name</a></td>
+            <td>@line.wins</td>
+            <td>@line.losses</td>
+            <td>@("%1.3f".format(line.pct))</td>
+            <td>@line.htH.getOrElse("-")</td>
+        </tr>
+        }
+        </tbody>
+    </table>
+
+    <span style="text-align: center; font-style: italic; font-size: 0.75em">Click a team to see its schedule.</span>
+</div>
+
+
+<script>
+    // need to hook up to the tabs "load" event.  (still want it for doc load probably if opened as separate tab)
+//    $(document).ready(function () {
+//
+//        $('.team-schedule').each(function () {
+//            var $link = $(this);
+//            var $dialog = $('<div></div>')
+//                    .dialog({
+//                        autoOpen:false,
+//                        resizable:true,
+//                        title:$link.attr('title'),
+//                        width:500,
+//                        maxHeight:800
+//                    });
+//
+//            $link.click(function () {
+//                if (!$dialog.is("div #content")) {
+//                    $dialog.load($link.attr('href') + ' #content')
+//                }
+//                $dialog.dialog('open');
+//
+//                return false;
+//            });
+//        });
+//
+//    });
+
+
+</script>
+}
