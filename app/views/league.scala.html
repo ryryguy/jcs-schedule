@@ -1,4 +1,4 @@
-@(league:League, teams:Map[Long, Team], season:Option[Season], nextSeason:Option[Season], lastWeek:Option[Week], nextWeek:Option[Week])
+@(league:League, leagueForm:Form[League], teams:Map[Long, Team], season:Option[Season], nextSeason:Option[Season], lastWeek:Option[Week], nextWeek:Option[Week])
 
 @import helper._
 @import tags._
@@ -12,7 +12,7 @@
     case Some(s) => {Started on @s.start_date.toString("MM/dd/yy")</h3>
 <p class="clear"/>
 
-<div id="tabs" style="width: 100%">
+<div class="tabs" style="width: 100%">
     <ul>
         <li><a href="#recent">Recent</a></li>
         <li><a href="#teams">Teams</a></li>
@@ -52,22 +52,47 @@ case None => {None</h3>}
     } </h3>
 
 @boardpanel {
-<div>
-    <h3>Edit this league:</h3>
+<div class="tabs" style="width: 100%">
+    <ul>
+        <li><a href="#edit_league">Edit League</a></li>
+        <li><a href="#edit_season">Edit Season</a></li>
+        <li><a href="#score_games">Enter Scores</a></li>
+        <li><a href="#schedule_games">Schedule Games</a></li>
+    </ul>
 
-    <p>TODO: Edit league form, add season, add/remove teams, email captains</p>
+    <div id="edit_league">
+        <h3>Edit this league:</h3>
+        @form(action = routes.LeagueController.editLeague(league.id.get)) {
 
-    <p></p>
 
-    <h3>League News</h3>
+        <div hidden='true'>@inputText(leagueForm("id"))</div>
+        @inputText(leagueForm("name"))
+        <p class="clear"/>
+        @inputText(leagueForm("location"))
+        <p class="clear"/>
+        @inputText(leagueForm("description"))
+        <p class="clear"/>
+        <dt class="nobg"><input type="submit" value="Save"></dt>
+        <p class="clear"/>
+        }
+    </div>
 
-    <p>TODO (maybe)</p>
+    <div id="edit_season">
+        TODO
+    </div>
 
+    <div id="score_games">
+        TODO
+    </div>
+
+    <div id="schedule_games">
+        TODO
+    </div>
 </div>
 
 <script>
     $(document).ready(function () {
-        $("#tabs").tabs({
+        $(".tabs").tabs({
             cache:true,
             ajaxOptions:{
                 cache:false,

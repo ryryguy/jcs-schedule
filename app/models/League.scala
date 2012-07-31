@@ -54,6 +54,18 @@ object League {
           .executeInsert()
   }
 
+  def update(league: League) = DB.withConnection {
+    implicit c =>
+    SQL(
+      """
+          update league
+          set league_name = {league_name}, location = {location}, description = {description}
+          where id = {id}
+      """)
+      .on('id -> league.id.get, 'league_name -> league.name, 'location -> league.location, 'description -> league.description)
+      .executeUpdate()
+  }
+
   def toggle(lid: Long) = DB.withConnection {
       implicit c =>
         SQL("update league set active = not active " +

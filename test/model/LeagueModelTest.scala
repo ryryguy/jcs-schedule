@@ -1,6 +1,6 @@
 package model
 
-import anorm.{Pk, NotAssigned}
+import anorm.{Id, Pk, NotAssigned}
 import models.League
 import org.specs2.mutable.Specification
 import play.api.test.{FakeApplication, FakeRequest}
@@ -61,6 +61,16 @@ class LeagueModelTest extends Specification {
       running(FakeApplication()) {
         League.active() must have size 1
         League.active().head.active must beTrue
+      }
+    }
+
+    "update existing leagues" in {
+      running(FakeApplication()) {
+        val leagueId = League.create(League(NotAssigned: Pk[Long], "Test league", "Test location", "Test description"))
+        val updatedLeague: League = League(Id(leagueId.get), "Updated name", "Updated location", "Updated Description")
+        League.update(updatedLeague)
+
+        League.findById(leagueId.get) should beSome(updatedLeague)
       }
     }
   }

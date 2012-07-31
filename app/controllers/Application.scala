@@ -4,6 +4,7 @@ import play.api._
 import db.DB
 import play.api.mvc._
 import play.api.data._
+import format.{Formats, Formatter}
 import play.api.data.Forms._
 import models._
 import anorm._
@@ -92,4 +93,18 @@ object Application extends Controller {
   }
 
   def logout = TODO
+
+  /** Default formatter for the `Pk[Long]` type. */
+  implicit def pkLongFormat = new Formatter[Pk[Long]] {
+
+    override val format = Some("format.numeric", Nil)
+
+    def bind(key: String, data: Map[String, String]) = {
+      Formats.longFormat.bind(key, data).right.flatMap { s =>
+        Right(Id(s))
+      }
+    }
+
+    def unbind(key: String, value: Pk[Long]) = Map(key -> value.toString)
+  }
 }
