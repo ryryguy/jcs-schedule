@@ -4,7 +4,9 @@
 @import tags._
 
 @main(title = "JCS Schedule & Scores - " + league.name) {
-<h2>@league.name: @league.description at @league.location</h2>
+<div id="league-heading">
+    <h2>@league.name: @league.description at @league.location</h2>
+</div>
 
 <p><h3 align="center">Current Season -
 
@@ -62,9 +64,11 @@ case None => {None</h3>}
 
     <div id="edit_league">
         <h3>Edit this league:</h3>
-        @form(action = routes.LeagueController.editLeague(league.id.get)) {
-
-
+        @ajaxform(
+            jsRoute = "LeagueController.editLeague(" + league.id.get + ")",
+            id = "edit-league-form",
+            successCallback = Some("leagueUpdated")) {
+        <fieldset>
         <div hidden='true'>@inputText(leagueForm("id"))</div>
         @inputText(leagueForm("name"))
         <p class="clear"/>
@@ -74,10 +78,12 @@ case None => {None</h3>}
         <p class="clear"/>
         <dt class="nobg"><input type="submit" value="Save"></dt>
         <p class="clear"/>
+        </fieldset>
         }
     </div>
 
     <div id="edit_season">
+        <h3>Edit current season:</h3>
         TODO
     </div>
 
@@ -125,7 +131,9 @@ case None => {None</h3>}
 
     });
 
-
+    function leagueUpdated(response) {
+        $('#league-heading').html($('<h2>' + response + '</h2>'));
+    }
 </script>
 
 }

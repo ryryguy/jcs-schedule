@@ -45,10 +45,10 @@ object LeagueController extends Controller {
   def editLeague(leagueId: Long) = Action {
     implicit request =>
       newLeagueForm.bindFromRequest.fold(
-        errors => BadRequest(views.html.leagues(League.active(), League.all(), newLeagueForm)),
+        errors => BadRequest,
         league => {
           League.update(league.copy(id = Id(leagueId)))
-          Ok("League updated")
+          Ok(league.name + ": " + league.description + " at " + league.location)
         }
       )
   }

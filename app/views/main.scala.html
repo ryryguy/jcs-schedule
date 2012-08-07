@@ -1,6 +1,7 @@
 @(title: String)(content: Html)
 
 @import tags._
+@import helper.javascriptRouter
 
 <!DOCTYPE html>
 
@@ -23,6 +24,9 @@
     <link rel="shortcut icon" type="image/png" href='@routes.Assets.at("images/favicon.png")'>
     <script src='@routes.Assets.at("javascripts/jquery-1.7.1.min.js")' type="text/javascript"></script>
     <script type="text/javascript" src='@routes.Assets.at("javascripts/jquery-ui-1.8.21.custom.min.js")'></script>
+    @javascriptRouter("jsRoutes")(
+        routes.javascript.LeagueController.editLeague
+    )
     <title>@title</title>
 </head>
 <body class='wsite-theme-light wsite-page-index weeblypage-index'>

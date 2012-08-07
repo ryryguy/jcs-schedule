@@ -88,6 +88,24 @@ a.no-line-link:active {
     color: #2180BC;
 }
 
+span.ajaxformmsg {
+    font-size: smaller;
+    font-style: italic;
+    padding-left: 10px;
+}
+
+span.saving {
+    color: black;
+}
+
+span.error {
+    color: red;
+}
+
+span.success {
+    color: green;
+}
+
 
 /*.navcontainer ul {*/
 /*padding-left: 0;*/

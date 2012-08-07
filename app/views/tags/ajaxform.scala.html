@@ -1,0 +1,28 @@
+@(jsRoute: String, id: String, successCallback: Option[String], args: (Symbol,String)*)(body: => Html)
+
+<form action="" method="" id="@id" @toHtmlArgs(args.toMap)>
+@body
+</form>
+<script>
+    $('[type="submit"]', $('#@id')).click(function(e) {
+        e.preventDefault();
+        var $msg = $('#@{id}-msg');
+        jsRoutes.controllers.@{jsRoute}.ajax({
+            data: $(this).parents("form").serializeArray(),
+            success: function(response) {
+                $msg.text("Ok").attr("class", "ajaxformmsg success");
+                @if(successCallback.isDefined) {
+                    @{successCallback.get}(response); }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $msg.text(errorThrown).attr("class", "ajaxformmsg error");
+                var newWindow = window.open('', '_blank', 'location=no,menubar=no,copyhistory=no');
+                newWindow.document.write(jqXHR.responseText);
+                newWindow.focus();
+            }
+        });
+        $msg.text("Saving...").attr("class", "ajaxformmsg saving");
+    });
+    $('[type="submit"]', $('#@id')).after("<span class='ajaxformmsg' id='@{id}-msg'></span>");
+
+</script>
