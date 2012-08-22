@@ -1,0 +1,20 @@
+@(weeks:Seq[Week], tag:String, selectedWeekId:Option[Long] = None)(content:Html)
+<select id="week-select-@tag">
+    @for(week <- weeks) {
+        <option value="@week.id.get" @if(Some(week.id.get) == selectedWeekId) {selected="selected"}>
+            @week.gameDate.toString(Application.VIEW_DATE_PATTERN)
+            @week match {
+                case scheduled: WeekScheduled => { (Scheduled) }
+                case completed: WeekCompleted => { (Completed) }
+                case unscheduled: WeekUnscheduled => { (Unscheduled) }
+            }
+        </option>
+    }
+</select>
+
+<div id="week-select-@tag-content">@content</div>
+
+
+
+
+

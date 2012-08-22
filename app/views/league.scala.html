@@ -58,7 +58,7 @@ case None => {None</h3>}
     <ul>
         <li><a href="#edit_league">Edit League</a></li>
         <li><a href="#edit_season">Edit Season</a></li>
-        <li><a href="#score_games">Enter Scores</a></li>
+        <li><a title="enter scores" href="@routes.SeasonController.editSeasonScores(seasonId = season.get.id.get)">Enter Scores</a></li>
         <li><a href="#schedule_games">Schedule Games</a></li>
     </ul>
 
@@ -87,10 +87,6 @@ case None => {None</h3>}
         TODO
     </div>
 
-    <div id="score_games">
-        TODO
-    </div>
-
     <div id="schedule_games">
         TODO
     </div>
@@ -103,7 +99,8 @@ case None => {None</h3>}
             ajaxOptions:{
                 cache:false,
                 dataFilter:function (data) {
-                    return $(data).find("div #content")
+                    var $content = $(data).find("div #content");
+                    return $content.length > 0 ? $content : $(data);
                 }
             }
         });

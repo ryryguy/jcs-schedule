@@ -3,13 +3,9 @@ package controllers
 import play.api.mvc.{Action, Controller}
 import models._
 import scala.Some
-import play.api.data.Form
-import play.api.data.Forms._
-import controllers.WinLossRecord
-import scala.Some
-import controllers.StandingsLine
 import models.CompletedGame
-import anorm.Pk
+import play.api.templates.Html
+import org.joda.time.{DateMidnight, DateTimeZone}
 
 /**
  * Created with IntelliJ IDEA.
@@ -67,6 +63,20 @@ object SeasonController extends Controller {
           calculateStandings(seasonId)))
       }
     }
+  }
+
+  def editSeasonScores(seasonId: Long) = Action {
+    val weeks: List[Week] = Week.findBySeasonId(seasonId)
+    val currWeek = weeks.find(_.gameDate.isAfter(new DateMidnight(DateTimeZone.forID("America/Los_Angeles"))))
+    Ok(views.html.forms.weekselector(weeks, "scores", if (currWeek.isDefined) Some(currWeek.get.id.get) else None)
+      (controllers.WeekController.getWeekOfGamesForm(currWeek.get.id.get))
+      + Html("""
+            <script>$("#week-select-scores").change(function(e){
+             jsRoutes.controllers.WeekController.editWeekScores(e.target.options[e.target.selectedIndex].value)
+             .ajax({success: function(response) {$("#week-select-scores-content").html(response);} });
+            });</script>
+             """)
+    )
   }
 
   val standingsOrdering: Ordering[StandingsLine] = Ordering.by[StandingsLine, (Float, Option[Int])](sl => (1.0f - sl.pct, sl.htH))
