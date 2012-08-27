@@ -70,5 +70,19 @@ object Team {
         .as((if (includeEmail) team else teamNoEmail) *)
   }
 
+  def findByWeekId(weekId: Long, includeEmail: Boolean): List[Team] = DB.withConnection {
+    implicit c =>
+      SQL( """
+          select team.* from team
+          join week w on w.id = {weekId}
+          join season s on s.id = w.season_id
+          join league l on l.id = s.league_id
+          join team2league t2l on t2l.league_id = l.id
+          where team.id = t2l.team_id
+           """)
+        .on('weekId -> weekId)
+        .as((if (includeEmail) team else teamNoEmail) *)
+  }
+
   def mapById(teams: List[Team]): Map[Long, Team] = teams.groupBy(_.id.get).mapValues(_.head)
 }

@@ -45,6 +45,8 @@ object Set {
 
 abstract class Game() {
   def id: Pk[Long]
+  def team1Id: Long
+  def team2Id: Long
 }
 
 case class ScheduledGame(id: Pk[Long] = NotAssigned, weekId: Long, startTime: LocalTime, court: Int, team1Id: Long, team2Id: Long,

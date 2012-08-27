@@ -1,1 +1,18 @@
-@(gamesForm:Form[WeekOfGames], teams:Map[Long, Team])
+@(gamesForm:Form[WeekOfGames], weekId:Long)
+
+@import helper._
+
+@form(action = routes.WeekController.submitScores(weekId)) {
+    @repeat(gamesForm("games")) { gamesField =>
+<fieldset>
+        @input(gamesField("gameId"), '_label -> "") { (id, name, value, args) => <input type="hidden" name="@name" id="@id" @toHtmlArgs(args)> }
+        @gamesField("teams.team1").value.get vs. @gamesField("teams.team2").value.get:
+        @repeat(gamesField("scores"), min = 3) { scoresField =>
+            <div>
+                <input type="text" name='@scoresField("team1").name' id='@scoresField("team1").id' value='@scoresField("team1").value' size="2"> - <input type="text" name='@scoresField("team2").name' id='@scoresField("team2").id' value='@scoresField("team2").value' size="2">
+            </div>
+        }
+</fieldset>
+    }
+}
+
