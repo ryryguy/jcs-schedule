@@ -10,6 +10,8 @@ import org.joda.time.{DateTimeZone, DateMidnight}
 import models.ScheduledGame
 
 import views._
+import anorm.Id
+import html.league
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,7 +20,7 @@ import views._
  * Time: 10:40 PM
  */
 
-case class ScoredGame(gameId: Long, teams: (String, String), scores: Seq[Option[(Int, Int)]])
+case class ScoredGame(gameId: Long, teams: Option[(String, String)], scores: Seq[Option[(Int, Int)]])
 
 case class WeekOfGames(games: Seq[ScoredGame])
 
@@ -29,7 +31,7 @@ object WeekController extends Controller {
       "games" -> seq(
         mapping(
           "gameId" -> longNumber,
-          "teams" -> tuple("team1" -> text, "team2" -> text),
+          "teams" -> optional(tuple("team1" -> text, "team2" -> text)),
           "scores" -> seq(
             optional(tuple("team1" -> number, "team2" -> number))
           )
@@ -38,7 +40,19 @@ object WeekController extends Controller {
     )(WeekOfGames.apply)(WeekOfGames.unapply)
   )
 
-  def submitScores(weekId: Long) = TODO
+  def submitScores(weekId: Long) = Action {
+    implicit request =>
+      weekOfGamesForm.bindFromRequest.fold(
+        errors => BadRequest(Html("Some error: " + errors.toString())),
+        weekOfGames => {
+          weekOfGames.games foreach( scoredGame => {
+            for(i <- 0 until scoredGame.scores.length; score = scoredGame.scores(i))
+              if(score isDefined) Game.scoreSet(scoredGame.gameId, (i + 1).toShort, score.get._1.toShort, score.get._2.toShort)
+          })
+          Ok("Saved scores for week " + weekId)
+        }
+      )
+  }
 
   def editWeekScores(weekId: Long) = Action {
     Ok(getWeekOfGamesForm(weekId))
@@ -50,17 +64,18 @@ object WeekController extends Controller {
     val weekOfGames = WeekOfGames(Game.findByWeekId(weekId).map {
       g: Game =>
         ScoredGame(g.id.get,
-          (teamMap(g.team1Id).name, teamMap(g.team2Id).name),
+          Some((teamMap(g.team1Id).name, teamMap(g.team2Id).name)),
           g match {
             case scheduled: ScheduledGame => List.fill(scheduled.numSets)(None);
             case completed: CompletedGame => completed.setScores.map {
               s: String => {
-                val scores = s.split("-"); (Some(scores(0).toInt, scores(1).toInt))
+                val scores = s.split("-");
+                (Some(scores(0).toInt, scores(1).toInt))
               }
             };
           })
     })
 
-    html.forms.editscores(weekOfGamesForm.fill(weekOfGames), weekId)
+    if (weekOfGames.games.isEmpty) Html("<div>No games scheduled.</div>") else html.forms.editscores(weekOfGamesForm.fill(weekOfGames), weekId)
   }
 }

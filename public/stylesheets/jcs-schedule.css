@@ -33,6 +33,32 @@ p.clear {
     vertical-align: top;
 }
 
+table.score {
+    border-collapse: collapse;
+}
+
+td.scoreTeam {
+    text-align: right;
+    border-bottom: hidden;
+}
+
+input.scoreInput {
+    text-align: center;
+    width: 2.5em;
+}
+
+thead.scores {
+    border-bottom: 2px double #000;
+}
+
+tr.first {
+    margin-top: 1px;
+}
+
+tr.last {
+    border-bottom: 2px dotted #000;
+}
+
 ul.vblist {
     list-style-type: none;
     padding: 0;

@@ -1,18 +1,29 @@
 @(gamesForm:Form[WeekOfGames], weekId:Long)
 
 @import helper._
+@import tags._
 
-@form(action = routes.WeekController.submitScores(weekId)) {
-    @repeat(gamesForm("games")) { gamesField =>
-<fieldset>
-        @input(gamesField("gameId"), '_label -> "") { (id, name, value, args) => <input type="hidden" name="@name" id="@id" @toHtmlArgs(args)> }
-        @gamesField("teams.team1").value.get vs. @gamesField("teams.team2").value.get:
-        @repeat(gamesField("scores"), min = 3) { scoresField =>
-            <div>
-                <input type="text" name='@scoresField("team1").name' id='@scoresField("team1").id' value='@scoresField("team1").value' size="2"> - <input type="text" name='@scoresField("team2").name' id='@scoresField("team2").id' value='@scoresField("team2").value' size="2">
-            </div>
-        }
-</fieldset>
+@scoreRow(gamesField: Field, team: String) = {
+    <td class="scoreTeam">@gamesField("teams." + team).value.get</td>
+    @repeat(gamesField("scores"), min = 3) { scoresField =>
+    <td><input type="text" name='@scoresField(team).name' id='@scoresField(team).id' value='@scoresField(team).value' class="scoreInput"></td>
     }
+}
+
+@ajaxform(
+    jsRoute = "WeekController.submitScores(" + weekId + ")",
+    id = "edit-scores-form",
+    successCallback = None) {
+<fieldset>
+    <table>
+        <thead class="scores"><td align="right">Team</td><td>Game 1</td><td>Game 2</td><td>Game 3</td></thead>
+    @repeat(gamesForm("games")) { gamesField =>
+        <input type="hidden" name='@gamesField("gameId").name' id='@gamesField("gameId").id' value='@gamesField("gameId").value' size="0">
+        <tr class="first">@scoreRow(gamesField, "team1")</tr>
+        <tr class="last">@scoreRow(gamesField, "team2")</tr>
+    }
+    </table>
+    <dt class="nobg"><input type="submit" value="Save"></dt>
+</fieldset>
 }
 
