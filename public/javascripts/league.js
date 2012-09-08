@@ -2,7 +2,7 @@ function leagueUpdated(response) {
     $('#league-heading').html($('<h2>' + response + '</h2>'));
 }
 
-$(document).ready(function () {
+$(function () {
     var $tabs = $(".tabs");
     $tabs.tabs({
 //            cache:true,
@@ -13,10 +13,6 @@ $(document).ready(function () {
                 return $content.length > 0 ? $content : $(data);
             }
         }
-    });
-
-    $tabs.on('tabsload', function (e, ui) {
-        console.log("Tab loaded: " + ui.tab);
     });
 
     $('.team-schedule').each(function () {
