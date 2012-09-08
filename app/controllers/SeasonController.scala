@@ -70,12 +70,6 @@ object SeasonController extends Controller {
     val currWeek = weeks.find(_.gameDate.isAfter(new DateMidnight(DateTimeZone.forID("America/Los_Angeles"))))
     Ok(views.html.forms.weekselector(weeks, "scores", if (currWeek.isDefined) Some(currWeek.get.id.get) else None)
       (controllers.WeekController.getWeekOfGamesForm(currWeek.get.id.get))
-      + Html("""
-            <script>$("#week-select-scores").change(function(e){
-             jsRoutes.controllers.WeekController.editWeekScores(e.target.options[e.target.selectedIndex].value)
-             .ajax({success: function(response) {$("#week-select-scores-content").html(response);} });
-            });</script>
-             """)
     )
   }
 

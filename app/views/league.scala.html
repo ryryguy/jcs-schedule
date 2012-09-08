@@ -3,7 +3,11 @@
 @import helper._
 @import tags._
 
-@main(title = "JCS Schedule & Scores - " + league.name) {
+@scripts = {
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/league.js")'></script>
+}
+
+@main(title = "JCS Schedule & Scores - " + league.name, scripts = scripts) {
 <div id="league-heading">
     <h2>@league.name: @league.description at @league.location</h2>
 </div>
@@ -91,47 +95,5 @@ case None => {None</h3>}
         TODO
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        $(".tabs").tabs({
-//            cache:true,
-            ajaxOptions:{
-                cache:false,
-                dataFilter:function (data) {
-                    var $content = $(data).find("div #content");
-                    return $content.length > 0 ? $content : $(data);
-                }
-            }
-        });
-
-        $('.team-schedule').each(function () {
-            var $link = $(this);
-            var $dialog = $('<div></div>')
-                    .dialog({
-                        autoOpen:false,
-                        resizable:true,
-                        title:$link.attr('title'),
-                        width:500,
-                        maxHeight:800
-                    });
-
-            $link.click(function () {
-                if (!$dialog.is("div #content")) {
-                    $dialog.load($link.attr('href') + ' #content')
-                }
-                $dialog.dialog('open');
-
-                return false;
-            });
-        });
-
-    });
-
-    function leagueUpdated(response) {
-        $('#league-heading').html($('<h2>' + response + '</h2>'));
-    }
-</script>
-
 }
 }

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String, scripts: Html = Html(""))(content: Html)
 
 @import tags._
 @import helper.javascriptRouter
@@ -28,6 +28,7 @@
         routes.javascript.LeagueController.editLeague, routes.javascript.WeekController.editWeekScores,
         routes.javascript.WeekController.submitScores, routes.javascript.SeasonController.editSeasonScores
     )
+    @scripts
     <title>@title</title>
 </head>
 <body class='wsite-theme-light wsite-page-index weeblypage-index'>
